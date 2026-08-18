@@ -12,10 +12,10 @@
   <meta property="og:description" content="Online-SDFT uses one 230M-parameter model as an adapter-enabled student and adapter-disabled hindsight teacher, training a rank-4 attention-only Q/K/V/O LoRA adapter from delayed factual feedback while the base weights stay frozen.">
   <meta property="og:url" content="https://lin826.github.io/SLM-Online-SDFT/">
   <meta property="og:site_name" content="Online-SDFT">
-  <meta property="og:image" content="https://lin826.github.io/SLM-Online-SDFT/assets/og.png">
-  <meta property="og:image:width" content="1536">
-  <meta property="og:image:height" content="1024">
-  <meta property="og:image:alt" content="Online personalization under action-dependent feedback">
+  <meta property="og:image" content="https://lin826.github.io/SLM-Online-SDFT/figures/blog_teaser.png">
+  <meta property="og:image:width" content="2517">
+  <meta property="og:image:height" content="895">
+  <meta property="og:image:alt" content="Three-step on-device SDFT loop: the model acts on a private stream, observes the delayed outcome, and teaches itself through self-distillation">
   <meta property="article:published_time" content="2026-08-07">
   <meta property="article:modified_time" content="2026-08-15">
   <meta property="article:author" content="I-Ju Lin">
@@ -23,8 +23,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Fine-Tuning Small Language Models for Continual Learning On-Device with Self-Distillation">
   <meta name="twitter:description" content="Online-SDFT uses one 230M-parameter model as an adapter-enabled student and adapter-disabled hindsight teacher, training a rank-4 attention-only Q/K/V/O LoRA adapter from delayed factual feedback while the base weights stay frozen.">
-  <meta name="twitter:image" content="https://lin826.github.io/SLM-Online-SDFT/assets/og.png">
-  <meta name="twitter:image:alt" content="Online personalization under action-dependent feedback">
+  <meta name="twitter:image" content="https://lin826.github.io/SLM-Online-SDFT/figures/blog_teaser.png">
+  <meta name="twitter:image:alt" content="Three-step on-device SDFT loop: the model acts on a private stream, observes the delayed outcome, and teaches itself through self-distillation">
   <title>Fine-Tuning Small Language Models for Continual Learning On-Device with Self-Distillation · Online-SDFT</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous" referrerpolicy="no-referrer">
   <link rel="stylesheet" href="styles.css?v=newsletter-3">
@@ -36,7 +36,7 @@
       {left: '$$', right: '$$', display: true},
       {left: '\\(', right: '\\)', display: false}
     ], throwOnError: false});"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Fine-Tuning Small Language Models for Continual Learning On-Device with Self-Distillation","description":"Online-SDFT uses one 230M-parameter model as an adapter-enabled student and adapter-disabled hindsight teacher, training a rank-4 attention-only Q/K/V/O LoRA adapter from delayed factual feedback while the base weights stay frozen.","author":[{"@type":"Person","name":"I-Ju Lin"},{"@type":"Person","name":"Zhang-Wei Hong"}],"datePublished":"2026-08-07","dateModified":"2026-08-15","mainEntityOfPage":"https://lin826.github.io/SLM-Online-SDFT/","image":"https://lin826.github.io/SLM-Online-SDFT/assets/og.png","isAccessibleForFree":true,"about":["on-device AI","online learning","self-distillation","notification routing"]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Fine-Tuning Small Language Models for Continual Learning On-Device with Self-Distillation","description":"Online-SDFT uses one 230M-parameter model as an adapter-enabled student and adapter-disabled hindsight teacher, training a rank-4 attention-only Q/K/V/O LoRA adapter from delayed factual feedback while the base weights stay frozen.","author":[{"@type":"Person","name":"I-Ju Lin"},{"@type":"Person","name":"Zhang-Wei Hong"}],"datePublished":"2026-08-07","dateModified":"2026-08-15","mainEntityOfPage":"https://lin826.github.io/SLM-Online-SDFT/","image":"https://lin826.github.io/SLM-Online-SDFT/figures/blog_teaser.png","isAccessibleForFree":true,"about":["on-device AI","online learning","self-distillation","notification routing"]}</script>
 </head>
 <body>
   <a class="skip-link" href="#article">Skip to article</a>

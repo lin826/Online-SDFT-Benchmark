@@ -27,10 +27,9 @@ jobs:
 
       - name: Assemble static site
         run: |
-          mkdir -p _site/figures _site/assets
+          mkdir -p _site/figures
           cp website/index.html _site/index.html
           cp website/styles.css _site/styles.css
-          if [ -f website/assets/og.png ]; then cp website/assets/og.png _site/assets/og.png; fi
           cp figures/blog_teaser.png \
              figures/bandit_accuracy.png \
              figures/evidence_gap.png \
