@@ -1,6 +1,6 @@
 # Online-SDFT: On-Device Continual Learning from Hindsight
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lin826/Online-SDFT-Benchmark/blob/main/online_sdft_bandit_demo.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lin826/SLM-Online-SDFT/blob/main/online_sdft_bandit_demo.ipynb)
 
 Small language models now run on phones, but they stop learning the moment they
 ship. The feedback that would personalize them arrives afterward, on the device,
@@ -100,7 +100,9 @@ learning-proof, privacy, and reset procedures.
 
 | | |
 | --- | --- |
-| [Colab notebook](https://colab.research.google.com/github/lin826/Online-SDFT-Benchmark/blob/main/online_sdft_bandit_demo.ipynb) | Run all six methods yourself, no install |
+| [Project website](https://lin826.github.io/SLM-Online-SDFT/) | The full argument, figures, and the Android prototype |
+| [Project website](https://lin826.github.io/SLM-Online-SDFT/) | The full argument, figures, and the Android prototype |
+| [Colab notebook](https://colab.research.google.com/github/lin826/SLM-Online-SDFT/blob/main/online_sdft_bandit_demo.ipynb) | Run all six methods yourself, no install |
 | [`docs/developer-guide.md`](docs/developer-guide.md) | Run your own learning rule, or a different model, on the benchmark |
 | [`docs/`](docs) | Protocol, baselines, evaluation gates, and the observability audit |
 | [`online_sdft/`](online_sdft) | Environment, evidence boundary, model, learners, causal loop |

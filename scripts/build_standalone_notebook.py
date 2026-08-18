@@ -1516,7 +1516,7 @@ def markdown_cells() -> list:
         nbf.v4.new_markdown_cell(
             r"""# On-device Online-SDFT: learn from the route you actually took
 
-<a href="https://colab.research.google.com/github/lin826/Online-SDFT-Benchmark/blob/main/online_sdft_bandit_demo.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+<a href="https://colab.research.google.com/github/lin826/SLM-Online-SDFT/blob/main/online_sdft_bandit_demo.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 
 An on-device assistant must act before feedback exists. It can learn only after
 the selected route produces a real OS/app callback. This notebook implements
@@ -1794,7 +1794,7 @@ deployment evidence.
 
 When you close the notebook, the transferable idea is the causal loop, not the
 particular notification categories. For the longer argument and figures, see the
-[repository](https://github.com/lin826/Online-SDFT-Benchmark)."""
+[project website](https://lin826.github.io/SLM-Online-SDFT/)."""
         ),
     ]
 

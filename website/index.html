@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fbfaf6">
+  <meta name="description" content="Online-SDFT uses one 230M-parameter model as an adapter-enabled student and adapter-disabled hindsight teacher, training a rank-4 attention-only Q/K/V/O LoRA adapter from delayed factual feedback while the base weights stay frozen.">
+  <meta name="author" content="I-Ju Lin &amp; Zhang-Wei Hong">
+  <link rel="canonical" href="https://lin826.github.io/SLM-Online-SDFT/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Fine-Tuning Small Language Models for Continual Learning On-Device with Self-Distillation">
+  <meta property="og:description" content="Online-SDFT uses one 230M-parameter model as an adapter-enabled student and adapter-disabled hindsight teacher, training a rank-4 attention-only Q/K/V/O LoRA adapter from delayed factual feedback while the base weights stay frozen.">
+  <meta property="og:url" content="https://lin826.github.io/SLM-Online-SDFT/">
+  <meta property="og:site_name" content="Online-SDFT">
+  <meta property="og:image" content="https://lin826.github.io/SLM-Online-SDFT/assets/og.png">
+  <meta property="og:image:width" content="1536">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="Online personalization under action-dependent feedback">
+  <meta property="article:published_time" content="2026-08-07">
+  <meta property="article:modified_time" content="2026-08-15">
+  <meta property="article:author" content="I-Ju Lin">
+  <meta property="article:author" content="Zhang-Wei Hong">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Fine-Tuning Small Language Models for Continual Learning On-Device with Self-Distillation">
+  <meta name="twitter:description" content="Online-SDFT uses one 230M-parameter model as an adapter-enabled student and adapter-disabled hindsight teacher, training a rank-4 attention-only Q/K/V/O LoRA adapter from delayed factual feedback while the base weights stay frozen.">
+  <meta name="twitter:image" content="https://lin826.github.io/SLM-Online-SDFT/assets/og.png">
+  <meta name="twitter:image:alt" content="Online personalization under action-dependent feedback">
+  <title>Fine-Tuning Small Language Models for Continual Learning On-Device with Self-Distillation · Online-SDFT</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="styles.css?v=newsletter-3">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+    onload="renderMathInElement(document.body, {delimiters: [
+      {left: '\\[', right: '\\]', display: true},
+      {left: '$$', right: '$$', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ], throwOnError: false});"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Fine-Tuning Small Language Models for Continual Learning On-Device with Self-Distillation","description":"Online-SDFT uses one 230M-parameter model as an adapter-enabled student and adapter-disabled hindsight teacher, training a rank-4 attention-only Q/K/V/O LoRA adapter from delayed factual feedback while the base weights stay frozen.","author":[{"@type":"Person","name":"I-Ju Lin"},{"@type":"Person","name":"Zhang-Wei Hong"}],"datePublished":"2026-08-07","dateModified":"2026-08-15","mainEntityOfPage":"https://lin826.github.io/SLM-Online-SDFT/","image":"https://lin826.github.io/SLM-Online-SDFT/assets/og.png","isAccessibleForFree":true,"about":["on-device AI","online learning","self-distillation","notification routing"]}</script>
+</head>
+<body>
+  <a class="skip-link" href="#article">Skip to article</a>
+  <header class="masthead">
+    <div class="masthead-inner">
+      <a class="masthead-title" href="./">Online-SDFT</a>
+      <nav aria-label="Project links">
+        <a href="#results">Results</a>
+        <a href="https://colab.research.google.com/github/lin826/SLM-Online-SDFT/blob/main/online_sdft_bandit_demo.ipynb">LoRA notebook</a>
+        <a href="https://github.com/lin826/SLM-Online-SDFT">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <header class="hero">
+      <h1>Fine-Tuning Small Language Models for Continual Learning On-Device with Self-Distillation</h1>
+      <p class="hero-byline">By I-Ju Lin &amp; Zhang-Wei Hong · Updated <time datetime="2026-08-15">August 15, 2026</time></p>
+      <div class="hero-links">
+        <a class="hero-cta" href="https://colab.research.google.com/github/lin826/SLM-Online-SDFT/blob/main/online_sdft_bandit_demo.ipynb">Run the LoRA notebook</a>
+      </div>
+    </header>
+
+      <details class="contents">
+        <summary>Contents</summary>
+        <nav aria-label="Contents">
+          <ol>
+          <li><a href="#introduction">Introduction</a></li>
+          <li><a href="#preliminaries-why-do-existing-fine-tuning-methods-fall-short">Preliminaries: Why Do Existing Fine-Tuning Methods Fall Short?</a></li>
+          <li><a href="#method-online-sdft-from-hindsight">Method: Online SDFT from Hindsight</a></li>
+          <li><a href="#experiments-push-notification-routing">Experiments: Push notification routing</a></li>
+          <li><a href="#online-sdft-on-android">Online-SDFT on Android</a></li>
+          <li><a href="#conclusion-and-limitations">Conclusion and limitations</a></li>
+          <li><a href="#references">References</a></li>
+          </ol>
+        </nav>
+      </details>
+
+    <article class="article" id="article">
+<p><strong>Abstract:</strong> Imagine a personal assistant that gradually learns how you write, which suggestions you accept, and how you use your apps—all without sending your private history to a training server. Recent model families, including Microsoft’s Phi-3, Meta’s quantized Llama 3.2 models, Google’s Gemma 3n, and Liquid AI’s LFM2, show that capable language models can now run directly on phones and other resource-constrained devices <a href="https://arxiv.org/abs/2404.14219">[1]</a>, <a href="https://ai.meta.com/blog/meta-llama-quantized-lightweight-models/">[2]</a>, <a href="https://ai.google.dev/gemma/docs/gemma-3n">[3]</a>, and <a href="https://arxiv.org/abs/2511.23404">[4]</a>. But local inference solves only half the problem:</p>
+<blockquote>
+<p>How can the model continue learning from a single user when interactions are sparse and compute is limited to a phone?</p>
+</blockquote>
+<p>In this post, we explore how to fine-tune a small language model (SLM) directly on a mobile device using <strong>on-policy self-distillation</strong>, building on <em>Self-Distillation Enables Continual Learning</em> <a href="https://arxiv.org/abs/2601.19897">[9]</a>. The key idea is to use the current model as both student and teacher: the teacher receives additional context from an interaction and generates a better-informed training target, while the student learns to produce that output from the original input alone.</p>
+<p>We adapt this idea to continual personalization from everyday phone interactions. The goal is to turn a sparse stream of user edits, choices, and outcomes into useful training signals while keeping both personal data and model updates on-device.</p>
+<figure class="figure figure-wide figure-teaser"><img alt="Three-step on-device SDFT loop: private activity arrives as a stream, an on-device language model acts, and a later hindsight observation loops back through self-distillation to teach the same model" src="figures/blog_teaser.png?v=streaming-hindsight-10" width="2517" height="895" loading="lazy" decoding="async" /><figcaption>Private activity arrives as a stream. The on-device language model acts first; after the phone observes what happened, SDFT uses that hindsight to teach the same model for future decisions.</figcaption></figure>
+<h2 id="introduction">Introduction</h2>
+<p><strong>Why On-Device AI?</strong> A personal assistant becomes more useful when it can draw on private context such as messages, calendars, documents, and app activity. Proprietary language models accessed through remote APIs can process this information, but doing so often requires sending it off-device. An on-device small language model (SLM) can instead keep personal context, inference, and model updates on the user’s device. Recent model families—including Phi-3, quantized Llama 3.2, Gemma 3n, and Liquid AI’s LFM2—show that capable models can now run on phones and other edge devices <a href="https://arxiv.org/abs/2404.14219">[1]</a>, <a href="https://ai.meta.com/blog/meta-llama-quantized-lightweight-models/">[2]</a>, <a href="https://ai.google.dev/gemma/docs/gemma-3n">[3]</a>, and <a href="https://arxiv.org/abs/2511.23404">[4]</a>. This makes local inference increasingly practical and raises the next question: can the model also continue learning after deployment?</p>
+<p><strong>Why Continual Learning?</strong> A useful assistant should adapt to how each user writes, which suggestions they accept, and when they prefer to be interrupted. These behaviors differ across users and change over time, so a static model cannot remain personalized. <strong>For example, consider push-notification routing</strong> <a href="https://arxiv.org/abs/2406.07067">[5]</a> and <a href="https://arxiv.org/abs/2202.03867">[6]</a>. An on-device model receives a notification plus local context and chooses whether to deliver it now, save it for a later digest, or archive it. The phone may later record only what happened on the route it actually took—such as an immediate open, an open from the digest, a deletion, or no observable selection. That outcome becomes hindsight for the model’s future decisions.</p>
+<figure class="figure figure-wide"><img alt="Push-notification routing example on a device: an incoming project update enters an on-device language model; it can deliver now, save for later, or archive; save for later is selected and the phone later observes an open from the digest, while the unchosen route outcomes remain unknown" src="figures/evidence_gap.png?v=notification-routing-3" width="2517" height="826" loading="lazy" decoding="async" /><figcaption>Push-notification routing is one example of action-dependent observation. The on-device language model chooses one route now and later observes only the factual outcome exposed by that route. That outcome becomes hindsight for future decisions; the unchosen outcomes remain unknown.</figcaption></figure>
+<p><strong>Continual learning on-device is hard because explicit user feedback is scarce.</strong> Proprietary models can be trained on large curated datasets or interaction logs from many users, allowing noisy signals to be averaged across large batches. An on-device SLM instead sees a sparse, asynchronous stream from one user, and most interactions do not reveal the correct action. An LLM memory system can store past interactions and retrieve similar cases as in-context examples, but each new decision depends on selecting and inserting the right memories <a href="https://arxiv.org/abs/2310.08560">[7]</a>. Fine-tuning complements memory by making user-specific behavior part of the model itself, without requiring a matching example in the context every time <a href="https://arxiv.org/abs/2311.12275">[8]</a>. The central challenge is therefore to turn sparse and delayed hindsight observations into useful supervision. <strong>On-policy self-distillation addresses this by using hindsight information to extract a stronger learning signal from each interaction</strong> <a href="https://arxiv.org/abs/2601.19897">[9]</a>, <a href="https://arxiv.org/abs/2601.18734">[10]</a>, <a href="https://arxiv.org/abs/2601.20802">[11]</a>, <a href="https://arxiv.org/abs/2603.12273">[12]</a>, and <a href="https://arxiv.org/abs/2605.17873">[13]</a>.</p>
+<p><strong>How does on-policy self-distillation train an SLM from hindsight?</strong> The idea is similar to how people learn from the consequences of their actions. Consider a salesperson writing outreach emails to increase customer engagement. Most recipients may never reply, but later events still provide useful clues: some may visit the product page, start a trial, or unsubscribe. None of these observations explicitly states what the salesperson should have written, yet they reveal how recipients responded and how the outreach strategy might improve. Similarly, an SLM can learn from what happens after it takes an action, without requiring a manually annotated reward or a ground-truth action.</p>
+<p>On-policy self-distillation turns these hindsight observations into supervision by allowing the same model to reconsider its action with access to what happened afterward. This hindsight-informed prediction then becomes a training target for the model operating from the original context alone. In the following sections, we show how to implement this process on-device.</p>
+<h2 id="preliminaries-why-do-existing-fine-tuning-methods-fall-short">Preliminaries: Why Do Existing Fine-Tuning Methods Fall Short?</h2>
+<p>Consider an SLM that manages push notifications on an Android phone. Given a notification and the current user context, the model must decide whether to deliver it immediately, delay it, or suppress it. The goal is to surface useful information while minimizing unnecessary interruptions.</p>
+<p><strong>This is naturally an online learning problem.</strong> At each round \(t\), the model receives a context \(x_t\), samples an action \(y_t\) using its current parameters \(\theta_t\), observes what happens afterward as hindsight \(z_t\), and updates itself before the next interaction:</p>
+<pre><code class="language-python">model = initialize_pretrained_model()
+
+for t in interaction_stream:
+    x_t = observe_context()
+    y_t = model.sample(x_t)
+    execute(y_t)
+
+    z_t = observe_hindsight()
+    model.update(x_t, y_t, z_t)
+</code></pre>
+<p>Formally, each round follows</p>
+<div class="math-display">\[y_t \sim \pi_{\theta_t}(\cdot \mid x_t),
+\qquad
+\theta_{t+1}
+=
+\operatorname{Update}(\theta_t; x_t,y_t,z_t).\]</div>
+<p><strong>The objective is to make increasingly better decisions over time.</strong> Let \(\ell_t(y)\) denote the latent loss of taking action \(y\) in context \(x_t\), such as the cost of interrupting the user or withholding a useful notification. We measure performance through cumulative regret relative to the best policy in a policy class \(\Pi\):</p>
+<div class="math-display">\[\operatorname{Regret}(T)
+=
+\sum_{t=1}^{T}
+\mathbb{E}_{y \sim \pi_{\theta_t}(\cdot \mid x_t)}
+\left[\ell_t(y)\right]
+-
+\min_{\pi \in \Pi}
+\sum_{t=1}^{T}
+\mathbb{E}_{y \sim \pi(\cdot \mid x_t)}
+\left[\ell_t(y)\right].\]</div>
+<p>Low regret means that, over time, the adaptive model performs nearly as well as the best policy that could have been chosen in hindsight. Ideally, regret grows sublinearly with \(T\), so the average performance gap, \(\operatorname{Regret}(T)/T\), approaches zero.</p>
+<p><strong>The challenge is that the loss needed to minimize regret is not directly observed.</strong> After routing a notification, the device may observe whether the user opens, dismisses, or ignores it, but it does not observe the true loss \(\ell_t(y_t)\) or the outcomes of actions it did not take. The update must therefore learn from the hindsight observation \(z_t\) without treating it as a ground-truth label or a reliable scalar reward.</p>
+<p><strong>Supervised fine-tuning requires a ground-truth target.</strong> Let \(\pi_\theta\) denote a language model with parameters \(\theta\). Supervised fine-tuning maximizes the likelihood of a desired response:</p>
+<div class="math-display">\[\max_\theta
+\mathbb{E}_{(x,y^*) \sim \mathcal{D}}
+\left[
+\log \pi_\theta(y^* \mid x)
+\right],\]</div>
+<p>where \(x\) is the input context and \(y^*\) is the correct output. For notification routing, however, \(y^*\) is unavailable. We do not know whether the optimal action was to deliver a notification immediately, delay it, or suppress it entirely.</p>
+<p><strong>Reinforcement learning replaces the target label with a reward.</strong> Instead of learning from a ground-truth output, the model samples an action \(y\) and maximizes its expected reward:</p>
+<div class="math-display">\[\max_\theta
+\mathbb{E}_{x \sim \mathcal{D},\,y \sim \pi_\theta(\cdot \mid x)}
+\left[
+R(x,y)
+\right],\]</div>
+<p>where \(R(x,y)\) measures the quality of the selected action.</p>
+<p><strong>In practice, this reward is not directly available either.</strong> Users do not explicitly score every notification decision, and their observable behavior provides only an imperfect signal. Opening a notification does not necessarily mean that it arrived at the right time, while ignoring one does not necessarily mean that it was unimportant—the user may simply have been busy.</p>
+<p><strong>We therefore have neither the labels required by supervised learning nor the verifiable rewards required by reinforcement learning.</strong> At best, each interaction produces hindsight \(z_t\) that contains indirect evidence about the original decision. The central challenge is to turn this delayed and ambiguous evidence into an online update that reduces future regret.</p>
+<h2 id="method-online-sdft-from-hindsight">Method: Online SDFT from Hindsight</h2>
+<p><strong>We adapt SDFT <a href="https://arxiv.org/abs/2601.19897">[9]</a> to a stream of on-device interactions.</strong> At time \(t\), the current model receives context \(x_t\) and samples an action</p>
+<div class="math-display">\[y_t \sim \pi_{\theta_t}(\cdot \mid x_t).\]</div>
+<p>After the action is executed, the device observes hindsight information \(z_t\), such as whether the user opened, dismissed, or ignored a notification.</p>
+<p><strong>The hindsight-conditioned model becomes the teacher for the original decision.</strong> We run the same model with and without \(z_t\):</p>
+<div class="math-display">\[p_t(y)=\pi_{\theta_t}(y\mid x_t),
+\qquad
+q_t(y)=\pi_{\theta_t}(y\mid x_t,z_t).\]</div>
+<p>Because \(q_t\) has access to what happened afterward, it can make a better-informed prediction about which action should have been taken.</p>
+<p><strong>We distill this prediction back into the model using only the original context.</strong> For each collected interaction, we minimize</p>
+<div class="math-display">\[\mathcal{L}_{\mathrm{SDFT}} =
+D_{\mathrm{KL}}
+\left(
+\operatorname{sg}\!\left[
+\pi_{\theta_t}(\cdot\mid x_t,z_t)
+\right]
+\,\middle\|\,
+\pi_\theta(\cdot\mid x_t)
+\right),\]</div>
+<p>where \(\operatorname{sg}\) stops gradients through the teacher. The updated model therefore learns to predict from \(x_t\) what it could previously infer only after observing \(z_t\).</p>
+<p><strong>The resulting learning loop is online and on-policy.</strong></p>
+<pre><code class="language-python">for x in interaction_stream:
+    y = model.sample(x)                  # act with the current policy
+    execute(y)
+    z = observe_hindsight()
+
+    teacher = stop_gradient(model(x, z))
+    student = model(x)
+
+    update(kl_divergence(student, teacher))
+</code></pre>
+<p>In a live stream, feedback may mature many decisions after the action that caused it. Each lesson was collected by a recent version of the behavior policy, but replay may reuse it after the policy has changed. No ground-truth action, explicit reward annotation, or separate teacher model is required. The benchmark below adds reliability gating and causal support to this conceptual objective so that an ambiguous callback is not mistaken for a complete label.</p>
+<h3 id="two-practical-tricks-for-online-sdft">Two practical tricks for online SDFT</h3>
+<p>However, the original SDFT objective does not by itself specify how to collect useful hindsight from an action-dependent stream or how to train stably with a small memory budget. In online learning, the model must act before feedback exists, and its action determines which outcome can later be observed. A greedy policy can therefore reinforce its early choices and stop discovering useful alternatives. At the same time, updating on one sparse, correlated interaction at a time can make a small adapter noisy and prone to forgetting. We address these two problems with controlled exploration and bounded replay.</p>
+<p><strong>Trick 1: explore while uncertainty is useful, then taper.</strong> Let \(p_t(a)\) be the student&rsquo;s action distribution and \(g_t\) the one-hot distribution on its most likely action. We begin with an epsilon-greedy behavior distribution</p>
+<div class="math-display">\[b_t^{(0)}=(1-\epsilon)g_t+\epsilon\,U(\mathcal A).\]</div>
+<p>While the student&rsquo;s maximum action probability remains below a configurable confidence threshold \(\tau\), we mix in a domain-specific probe action that is likely to produce an observable outcome:</p>
+<div class="math-display">\[\rho_t=\rho_0\,2^{-(t-1)/h_\rho},
+\qquad
+b_t^{(1)}=(1-\rho_t)b_t^{(0)}+\rho_t\,\delta_{a_{\mathrm{probe}}}.\]</div>
+<p>Otherwise, \(b_t^{(1)}=b_t^{(0)}\).</p>
+<p>Later in the stream, the whole exploratory policy tapers toward the greedy action. With taper onset \(t_0\) and taper half-life \(h_\lambda\),</p>
+<div class="math-display">\[\lambda_t=
+\begin{cases}
+1, &amp; t\le t_0,\\
+2^{-(t-t_0)/h_\lambda}, &amp; t&gt;t_0,
+\end{cases}
+\qquad
+b_t=\lambda_t b_t^{(1)}+(1-\lambda_t)g_t,
+\qquad a_t\sim b_t.\]</div>
+<p>The epsilon component prevents immediate lock-in, the uncertainty gate spends extra exploration only when it is informative, and the decay limits the long-run cost of probing. The probe action depends on the application: it should be an action whose eventual outcome provides useful evidence. The exploration rate, confidence threshold, taper onset, and decay schedules are configurable rather than intrinsic constants of Online-SDFT.</p>
+<pre><code class="language-python">p = student(x)
+greedy = one_hot(argmax(p))
+behavior = (1 - epsilon) * greedy + epsilon * uniform(actions)
+
+if max(p) &lt;= confidence_threshold:
+    probe = initial_probe_mass * probe_decay(t)
+    behavior = (1 - probe) * behavior + probe * one_hot(feedback_action)
+
+if t &gt; taper_start:
+    taper = taper_decay(t - taper_start)
+    behavior = taper * behavior + (1 - taper) * greedy
+
+action = sample(behavior)
+</code></pre>
+<p><strong>Trick 2: replay a small, balanced set of recent lessons.</strong> Delayed feedback is sparse and often correlated: several similar outcomes can arrive close together. A single-example update wastes old evidence and lets common outcomes dominate. We instead retain a bounded window of the most recent usable lessons,</p>
+<div class="math-display">\[\mathcal B_t=
+\operatorname{KeepLast}_{M}
+\left(\mathcal B_{t-1}\cup\{(x_t,T_t,c_t)\}\right),\]</div>
+<p>where \(T_t\) is the soft target and \(c_t\) is its feedback group. For an older lesson \(i\) with age \(d_i\), its sampling weight is</p>
+<div class="math-display">\[w_i=\eta_{c_i}
+\frac{2^{-d_i/h}}
+{\sum_{j:c_j=c_i}2^{-d_j/h}},\]</div>
+<p>where \(h\) controls recency and \(\eta_c\) controls the relative weight of each feedback group. Reliable evidence receives full weight, while ambiguous evidence can be downweighted. Normalizing recency within each group prevents frequent outcomes from crowding out rare ones while still following changing behavior. Every batch includes the newest lesson, so replay does not sacrifice responsiveness. Training begins once enough usable evidence has accumulated, then uses bounded minibatches and a small fixed number of soft-target updates:</p>
+<div class="math-display">\[\mathcal L_{\mathcal S}
+=-
+\frac{1}{|\mathcal S|}
+\sum_{i\in\mathcal S}\sum_a
+T_i(a)\log \pi_\theta(a\mid x_i).\]</div>
+<pre><code class="language-python">if feedback_produces_target:
+    replay.append((x, soft_target, feedback_group))
+    replay = replay[-buffer_capacity:]
+
+if len(replay) &gt;= minimum_replay_size:
+    for _ in range(update_steps):
+        batch = [replay[-1]]
+        batch += weighted_sample(
+            replay[:-1],
+            size=remaining_batch_slots(batch_size),
+            balance_by=&quot;feedback_group&quot;,
+            recency_half_life=recency_half_life,
+        )
+        update_lora(mean_soft_cross_entropy(batch))
+</code></pre>
+<p>Replay is training-only and never enlarges the serving prompt.</p>
+<p><strong>Other safeguards worth mentioning:</strong></p>
+<ul>
+<li><strong>Reliability gating and causal support</strong> skip <code>UNKNOWN</code> outcomes and avoid converting ambiguous evidence into a false one-hot label.</li>
+<li><strong>Sealed delayed-feedback bookkeeping</strong> attaches each matured outcome to the exact context, action, and decision-time distribution that produced it, preserving act-before-learn order.</li>
+<li><strong>A stable same-model teacher</strong> reviews hindsight with LoRA disabled, while only the small LoRA adapter is updated. This avoids a second model and prevents student updates from moving the teacher.</li>
+</ul>
+<p>These safeguards make the loop causal and stable; controlled exploration and bounded replay are the main data-collection and optimization additions in the released configuration.</p>
+<h2 id="experiments-push-notification-routing">Experiments: Push notification routing</h2>
+<p>Notification routing is a convenient controlled test bed for delayed, action-dependent feedback: an assistant must act now, but the evidence needed to learn arrives later and only for the route it actually chose. The same structure appears in other personalization problems, including ranking suggestions, adapting shortcuts, and learning a user&rsquo;s preferred writing style. The experiment should therefore be read as a test of the learning loop, not as a claim that notification routing is its only application.</p>
+<h3 id="setup">Setup</h3>
+<p>The released LoRA benchmark uses the synthetic <code>semantic-title-body-sharp-t001</code> dataset and <code>LiquidAI/LFM2.5-230M</code>. It contains three paired streams (seeds 0–2) with 240 chronological decisions per stream, for 720 decisions per method. Each stream moves through weekday, on-call, and off-hours regimes. The run used NumPy 2.4.6 on Apple MPS.</p>
+<p>At each decision, the model sees a synthetic notification title and body, category, local time, current regime, and an on-device importance estimate. It chooses one of three actions: <strong>interrupt now</strong>, <strong>save for later</strong>, or <strong>archive</strong>. The chosen action determines which callback can later be observed. A delivered notification may be opened immediately, opened later, or deleted; a digest may be opened or deleted; an archived item produces no observable selection. Feedback that has not matured by the end of the stream is not released early.</p>
+<p>The simulator keeps two evaluation-only quantities hidden from every method: a sampled user preference and the utility of each possible route. We report three different metrics:</p>
+<ul>
+<li><strong>Sampled-preference accuracy</strong> is the fraction of decisions matching the hidden sampled preference. Higher is better.</li>
+<li><strong>Cumulative regret</strong> sums the utility lost relative to the best route for each event. Lower is better.</li>
+<li><strong>Observable reward per decision</strong> scores only what happened on the executed delivery surface. It is the scalar seen by REINFORCE, and it is not interchangeable with either accuracy or regret.</li>
+</ul>
+<p>All six methods receive the same paired event streams and are scored before learning from each event&rsquo;s outcome. The three weight-updating arms—REINFORCE, RFT, and Online-SDFT—use the same reset PEFT LoRA architecture: rank 4, alpha 8, zero dropout, and 172,032 trainable parameters across 48 adapter tensors in the <code>q_proj</code>, <code>k_proj</code>, <code>v_proj</code>, and <code>self_attn.out_proj</code> modules of six attention layers. The 230-million-parameter base stays frozen, similarly named convolutional projections are not adapted, and the LoRA adapter is never merged into the base model. One physical LFM is reused sequentially, with the same initial adapter state restored before every method and seed.</p>
+<h3 id="baselines">Baselines</h3>
+<table><caption>How the six methods adapt in the LoRA comparison</caption>
+<thead>
+<tr>
+<th scope="col">Method</th>
+<th scope="col">Learning signal in the LoRA comparison</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Base</strong></td>
+<td>Keeps the LFM frozen and never adapts.</td>
+</tr>
+<tr>
+<td><strong>ICL</strong></td>
+<td>Adds the three most recent reliable, single-route callbacks to the prompt.</td>
+</tr>
+<tr>
+<td><strong>RAG</strong></td>
+<td>Retrieves three reliable callbacks using an equal blend of metadata and visible title/body similarity.</td>
+</tr>
+<tr>
+<td><strong>REINFORCE</strong></td>
+<td>Trains the LoRA adapter from the factual scalar reward of each known callback, without replay or a hindsight teacher.</td>
+</tr>
+<tr>
+<td><strong>RFT (Rejection Fine-Tuning)</strong></td>
+<td>Draws one categorical hindsight-teacher candidate, keeps it only when reliable single-route evidence verifies it, and trains the same LoRA architecture with a hard target. This is a causal online adaptation of <a href="https://arxiv.org/abs/2605.10674">practical rejection fine-tuning</a>, rather than a reproduction of the <a href="https://arxiv.org/abs/2308.01825">original offline RFT pipeline</a>.</td>
+</tr>
+<tr>
+<td><strong>Online-SDFT</strong></td>
+<td>Trains the LoRA adapter from a reliability-conditioned soft target that preserves uncertainty.</td>
+</tr>
+</tbody>
+</table>
+<p>For a reliable callback that supports one action, the lesson blends three signals: 5% from an adapter-disabled review by the same physical LFM, 5% from the beliefs saved when the decision was made, and 90% from the routes supported by the observed behavior. For an ambiguous digest open, the method redistributes the saved decision-time beliefs across the still-plausible actions. An unobservable (<code>UNKNOWN</code>) callback creates no target or update. This causal filter prevents the learner from inventing outcomes for actions that were never taken.</p>
+<h3 id="results">Results</h3>
+<p>Across the three synthetic streams, Online-SDFT had the highest mean sampled-preference accuracy and the lowest mean cumulative regret. The values below are means with nominal 95% confidence intervals across only three paired streams.</p>
+<table><caption>LoRA results and nominal 95% confidence intervals across three paired synthetic streams (n = 3)</caption>
+<thead>
+<tr>
+<th scope="col">Method</th>
+<th scope="col" style="text-align: right;">Sampled-preference accuracy</th>
+<th scope="col" style="text-align: right;">Cumulative regret ↓</th>
+<th scope="col" style="text-align: right;">Observable reward / decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base</td>
+<td style="text-align: right;">28.19% ± 2.33</td>
+<td style="text-align: right;">164.67 ± 2.66</td>
+<td style="text-align: right;">0.256 ± 0.140</td>
+</tr>
+<tr>
+<td>ICL</td>
+<td style="text-align: right;">42.22% ± 3.57</td>
+<td style="text-align: right;">131.48 ± 0.60</td>
+<td style="text-align: right;">0.008 ± 0.055</td>
+</tr>
+<tr>
+<td>RAG</td>
+<td style="text-align: right;">50.00% ± 7.37</td>
+<td style="text-align: right;">106.62 ± 30.45</td>
+<td style="text-align: right;">0.316 ± 0.389</td>
+</tr>
+<tr>
+<td>REINFORCE</td>
+<td style="text-align: right;">32.08% ± 2.06</td>
+<td style="text-align: right;">157.99 ± 2.56</td>
+<td style="text-align: right;">-0.090 ± 0.176</td>
+</tr>
+<tr>
+<td>RFT</td>
+<td style="text-align: right;">52.78% ± 2.60</td>
+<td style="text-align: right;">105.26 ± 15.32</td>
+<td style="text-align: right;">0.364 ± 0.250</td>
+</tr>
+<tr>
+<td><strong>Online-SDFT</strong></td>
+<td style="text-align: right;"><strong>70.28% ± 2.60</strong></td>
+<td style="text-align: right;"><strong>44.76 ± 4.57</strong></td>
+<td style="text-align: right;"><strong>0.955 ± 0.082</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Online-SDFT made 506 of 720 decisions that matched the sampled preference. Compared with RFT, the strongest baseline by both mean accuracy and mean cumulative regret, it improved accuracy by 17.50 percentage points and reduced cumulative regret by 60.50. RFT accepted only 75 of 311 teacher candidates (24.12%), illustrating the data-efficiency cost of converting hindsight into a verified hard label; the soft target can retain graded information from more usable callbacks.</p>
+<h3 id="ablation-studies">Ablation studies</h3>
+<p>To isolate the two online-learning tricks, we reran Online-SDFT as a paired \(2\times2\) ablation. Every variant keeps the same hindsight target, LoRA architecture, optimizer, two update steps, four-lesson warmup, and event streams. The no-replay variants use only the newest lesson in both optimizer steps.</p>
+<table><caption>Online-SDFT exploration and replay ablation</caption>
+<thead>
+<tr>
+<th scope="col">Variant</th>
+<th scope="col">Serving policy</th>
+<th scope="col">Update data</th>
+<th scope="col" style="text-align: right;">Sampled-preference accuracy ↑</th>
+<th scope="col" style="text-align: right;">Cumulative regret ↓</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Full Online-SDFT</strong></td>
+<td>Controlled exploration</td>
+<td>64-row balanced replay</td>
+<td style="text-align: right;"><strong>70.28% ± 2.60</strong></td>
+<td style="text-align: right;"><strong>44.76 ± 4.57</strong></td>
+</tr>
+<tr>
+<td><strong>No exploration</strong></td>
+<td>Greedy</td>
+<td>Same replay</td>
+<td style="text-align: right;">69.44% ± 4.72</td>
+<td style="text-align: right;">62.00 ± 10.96</td>
+</tr>
+<tr>
+<td><strong>No replay</strong></td>
+<td>Same exploration</td>
+<td>Newest lesson only</td>
+<td style="text-align: right;">39.58% ± 1.70</td>
+<td style="text-align: right;">134.90 ± 11.34</td>
+</tr>
+<tr>
+<td><strong>Neither trick</strong></td>
+<td>Greedy</td>
+<td>Newest lesson only</td>
+<td style="text-align: right;">42.78% ± 3.41</td>
+<td style="text-align: right;">130.42 ± 4.12</td>
+</tr>
+</tbody>
+</table>
+<p>Replay made the largest difference on these streams. Removing it reduced mean accuracy by 30.69 percentage points and added 90.14 cumulative regret. Removing exploration while retaining replay changed accuracy by only 0.83 points, but added 17.24 regret: greedy serving still matched many sampled preferences, yet made more costly mistakes. Values are means with nominal 95% confidence intervals across the same three paired synthetic streams.</p>
+<h2 id="online-sdft-on-android">Online-SDFT on Android</h2>
+<p>The repository includes an Android proof of concept that brings the learning loop onto one device. A local <code>LiquidAI/LFM2.5-230M</code> makes each decision; once hindsight becomes available, ONNX Runtime Training updates a rank-4 LoRA adapter while the base model remains frozen. Replay and adapter checkpoints stay in app-private storage and survive restarts.</p>
+<figure class="android-demo">
+  <video src="figures/android_demo.mp4?v=android-demo-1" width="1080" height="1452" poster="figures/android_demo_poster.png?v=android-demo-2" controls muted loop playsinline preload="metadata" aria-label="Screen recording from a physical Android phone: a notification is dismissed from the shade several times until the model stops showing it, the person then asks for it back, and the next one arrives in the shade again">
+    Your browser cannot play this video. It records a notification being dismissed from the shade until the model stops showing it, then being asked for again.
+  </video>
+  <figcaption><strong>On a physical phone, no network.</strong> The same notification is dismissed from Android&rsquo;s shade until the model keeps it quiet and files it under Saved. The person then asks for it back, and the next one is delivered again: the correction moved <em>Show now</em> from silenced to 94%. Every signal comes from the shade gestures, and the adapter update runs on the device.</figcaption>
+</figure>
+
+<p>Model export and provisioning still happen on a Linux host, and the current FP32 graph targets high-memory ARM64 devices. The <a href="https://github.com/lin826/SLM-Online-SDFT/blob/main/android-demo/README.md">complete Android deployment guide</a> contains the exact requirements, build and provisioning commands, Android permissions, verification logs, reset procedure, and failure checks.</p>
+<blockquote>
+<p><strong>Engineering prototype.</strong> This demonstrates the Android integration for real on-device LoRA updates; it does not yet establish production latency, battery use, or thermal behavior.</p>
+</blockquote>
+<h2 id="conclusion-and-limitations">Conclusion and limitations</h2>
+<p>This controlled experiment supports a focused hypothesis: when feedback is delayed, partial, and generated by the model&rsquo;s own actions, a reliability-conditioned soft hindsight target can be more useful than prompt memory, a scalar reward, or a rejection-filtered hard target. The broader idea is not specific to notifications. A compact model can act on current context, revisit a completed interaction with additional factual evidence, and distill that lesson into a small local update for future decisions.</p>
+<p>The evidence is still narrow. The benchmark uses three synthetic streams rather than real users, and the selected Online-SDFT configuration has not been confirmed on held-out streams. The run used Apple MPS and did not measure Android latency, peak memory, battery use, thermal throttling, background-job reliability, or end-to-end privacy. Small language models also remain constrained by reasoning ability and context length. The next step is therefore a larger held-out comparison followed by profiling on physical edge devices.</p>
+<h2 id="references">References</h2>
+<ol>
+<li>
+<p>Marah Abdin et al. <a href="https://arxiv.org/abs/2404.14219"><em>Phi-3 Technical Report: A Highly Capable Language Model Locally on Your Phone</em></a>. arXiv:2404.14219, 2024.</p>
+</li>
+<li>
+<p>Meta AI. <a href="https://ai.meta.com/blog/meta-llama-quantized-lightweight-models/"><em>Introducing Quantized Llama Models with Increased Speed and a Reduced Memory Footprint</em></a>. 2024.</p>
+</li>
+<li>
+<p>Google AI for Developers. <a href="https://ai.google.dev/gemma/docs/gemma-3n"><em>Gemma 3n Model Overview</em></a>. 2025.</p>
+</li>
+<li>
+<p>Alexander Amini et al. <a href="https://arxiv.org/abs/2511.23404"><em>LFM2 Technical Report</em></a>. arXiv:2511.23404, 2025.</p>
+</li>
+<li>
+<p>Huxiao Ji et al. <a href="https://arxiv.org/abs/2406.07067"><em>TIM: Temporal Interaction Model in Notification System</em></a>. <em>Proceedings of the International Conference on Multimedia Retrieval</em>, 2024.</p>
+</li>
+<li>
+<p>Yiping Yuan, Ajith Muralidharan, Preetam Nandy, Miao Cheng, and Prakruthi Prabhakar. <a href="https://arxiv.org/abs/2202.03867"><em>Offline Reinforcement Learning for Mobile Notifications</em></a>. <em>Proceedings of the ACM International Conference on Information and Knowledge Management</em>, 2022.</p>
+</li>
+<li>
+<p>Charles Packer et al. <a href="https://arxiv.org/abs/2310.08560"><em>MemGPT: Towards LLMs as Operating Systems</em></a>. arXiv:2310.08560, 2023.</p>
+</li>
+<li>
+<p>Ruiyang Qin et al. <a href="https://arxiv.org/abs/2311.12275"><em>Enabling On-Device Large Language Model Personalization with Self-Supervised Data Selection and Synthesis</em></a>. <em>Proceedings of the ACM/IEEE Design Automation Conference</em>, 2024.</p>
+</li>
+<li>
+<p>Idan Shenfeld, Mehul Damani, Jonas Hübotter, and Pulkit Agrawal. <a href="https://arxiv.org/abs/2601.19897"><em>Self-Distillation Enables Continual Learning</em></a>. arXiv:2601.19897, 2026.</p>
+</li>
+<li>
+<p>Siyan Zhao et al. <a href="https://arxiv.org/abs/2601.18734"><em>Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models</em></a>. arXiv:2601.18734, 2026.</p>
+</li>
+<li>
+<p>Jonas Hübotter et al. <a href="https://arxiv.org/abs/2601.20802"><em>Reinforcement Learning via Self-Distillation</em></a>. arXiv:2601.20802, 2026.</p>
+</li>
+<li>
+<p>Thomas Kleine Buening, Jonas Hübotter, Barna Pásztor, Idan Shenfeld, Giorgia Ramponi, and Andreas Krause. <a href="https://arxiv.org/abs/2603.12273"><em>Aligning Language Models from User Interactions</em></a>. arXiv:2603.12273, 2026.</p>
+</li>
+<li>
+<p>Woongyeng Yeo, Yumin Choi, Taekyung Ki, and Sung Ju Hwang. <a href="https://arxiv.org/abs/2605.17873"><em>HINT-SD: Targeted Hindsight Self-Distillation for Long-Horizon Agents</em></a>. arXiv:2605.17873, 2026.</p>
+</li>
+</ol>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <section class="demo-video" aria-labelledby="demo-video-title">
+      <div class="demo-video-copy">
+        <p class="demo-video-kicker">Continue exploring</p>
+        <h2 id="demo-video-title">See the on-device learning loop</h2>
+        <p id="demo-video-description">Run one illustrative stream with the
+        current LoRA architecture in Colab.</p>
+        <div class="footer-links">
+          <a class="hero-cta" href="https://colab.research.google.com/github/lin826/SLM-Online-SDFT/blob/main/online_sdft_bandit_demo.ipynb">Run the LoRA notebook</a>
+        </div>
+        <p class="demo-video-status"><span aria-hidden="true"></span>Demo video coming soon</p>
+      </div>
+    </section>
+  </footer>
+  <script>
+    if (window.location.protocol === "file:") {
+      for (const image of document.querySelectorAll('img[src^="figures/"]')) {
+        image.src = `../${image.getAttribute("src")}`;
+      }
+    }
+  </script>
+</body>
+</html>

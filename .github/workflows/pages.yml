@@ -1,0 +1,60 @@
+name: Deploy project website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "website/**"
+      - "figures/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Assemble static site
+        run: |
+          mkdir -p _site/figures _site/assets
+          cp website/index.html _site/index.html
+          cp website/styles.css _site/styles.css
+          if [ -f website/assets/og.png ]; then cp website/assets/og.png _site/assets/og.png; fi
+          cp figures/blog_teaser.png \
+             figures/bandit_accuracy.png \
+             figures/evidence_gap.png \
+             figures/android_demo.mp4 \
+             figures/android_demo_poster.png \
+             figures/online_sdft_process.gif \
+             _site/figures/
+          touch _site/.nojekyll
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
