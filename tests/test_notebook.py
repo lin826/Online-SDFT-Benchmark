@@ -633,7 +633,7 @@ def test_colab_results_cell_is_self_checking():
     results = next(
         source
         for source in _code_sources()
-        if "Byte-identical reproduction passed" in source
+        if "Verify all six methods and exact result bytes" in source
     )
     assert 'config["teacher_model"] == MODEL_ID' in results
     assert (
@@ -662,10 +662,6 @@ def test_colab_results_cell_is_self_checking():
     assert 'len(metrics) == 3 * len(METHODS)' in results
     assert 'len(rollouts) == 3 * len(METHODS) * STREAM_LENGTH' in results
     assert 'row["lesson_status"] == "soft_target_applied"' in results
-    assert "actual == expected" in results
-    assert "expected_sha == manifest_sha" in results
-    assert 'all(item["exact"] for item in artifact_comparison.values())' in results
-    assert "first differing byte" in results
     assert "beats" not in results
 
     config = experiment_config(

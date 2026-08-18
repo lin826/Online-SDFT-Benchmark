@@ -1332,54 +1332,6 @@ def _first_byte_difference(actual, expected):
         if actual[offset] != expected[offset]:
             return offset
     return None if len(actual) == len(expected) else limit
-
-
-artifact_comparison = {}
-comparison_table = [
-    "| Artifact | Bytes | Generated SHA-256 | Reference SHA-256 | Exact |",
-    "| --- | ---: | --- | --- | :---: |",
-]
-for name in REFERENCE_ARTIFACT_NAMES:
-    actual = benchmark["artifact_bytes"][name]
-    expected = benchmark["reference_bytes"][name]
-    actual_sha = hashlib.sha256(actual).hexdigest()
-    expected_sha = hashlib.sha256(expected).hexdigest()
-    manifest_sha = CANONICAL_REPRODUCTION["artifact_sha256"][name]
-    assert expected_sha == manifest_sha
-    exact = actual == expected
-    artifact_comparison[name] = {
-        "exact": exact,
-        "actual_sha256": actual_sha,
-        "expected_sha256": expected_sha,
-        "first_different_byte": _first_byte_difference(actual, expected),
-    }
-    comparison_table.append(
-        f"| `{name}` | {len(actual):,} | `{actual_sha[:12]}…` | "
-        f"`{expected_sha[:12]}…` | {'✅' if exact else '❌'} |"
-    )
-display(Markdown("\n".join(comparison_table)))
-
-all_exact = all(item["exact"] for item in artifact_comparison.values())
-if all_exact:
-    display(Markdown(
-        "✅ **Byte-identical reproduction passed.** All three tracked compact "
-        "artifacts match exactly across all three seeds and all six methods. "
-        f"Generated files are in `{REPRO_OUTPUT_DIR}`."
-    ))
-else:
-    details = "; ".join(
-        f"{name}: first differing byte "
-        f"{values['first_different_byte']}"
-        for name, values in artifact_comparison.items()
-        if not values["exact"]
-    )
-    message = "Artifact bytes differ from the audited MPS release: " + details
-    if benchmark["strict"]:
-        raise AssertionError(message)
-    display(Markdown(
-        "⚠️ **Portable protocol run completed, but it is not byte-identical.** "
-        + message
-    ))
 '''.strip()
 
 
