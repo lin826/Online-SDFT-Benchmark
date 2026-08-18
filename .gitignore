@@ -40,5 +40,8 @@ outputs/ablation/online_sdft_tricks/*
 /outputs/sweeps/
 /outputs/*tune*/
 
+# Local static-site preview
+_site/
+
 # Local run logs
 logs/

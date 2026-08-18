@@ -35,7 +35,6 @@ jobs:
              figures/bandit_accuracy.png \
              figures/evidence_gap.png \
              figures/android_demo.mp4 \
-             figures/android_demo_poster.png \
              figures/online_sdft_process.gif \
              _site/figures/
           touch _site/.nojekyll
