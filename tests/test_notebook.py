@@ -231,12 +231,17 @@ def test_notebook_does_not_embed_or_advertise_tuning_assets():
         assert stale_marker not in rendered
 
 
-def test_committed_notebook_code_cells_are_clean_and_unexecuted():
+def test_committed_notebook_carries_a_successful_execution():
     notebook = nbformat.read(NOTEBOOK, as_version=4)
     code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
     assert code_cells
-    assert all(cell.execution_count is None for cell in code_cells)
-    assert all(cell.outputs == [] for cell in code_cells)
+    executed = [cell for cell in code_cells if cell.execution_count is not None]
+    assert executed
+    assert all(
+        output.output_type != "error"
+        for cell in code_cells
+        for output in cell.outputs
+    )
 
 
 def test_interactive_game_examples_have_semantically_defensible_routes():
