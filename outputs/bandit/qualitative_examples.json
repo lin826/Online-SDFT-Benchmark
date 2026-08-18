@@ -1,0 +1,978 @@
+[
+  {
+    "seed": 0,
+    "t": 98,
+    "regime": "on-call",
+    "category": "manager",
+    "notification_title": "Kai needs a decision on Search",
+    "notification_body": "Please approve or reject the release exception within 20 minutes.",
+    "gold_action_scoring_only": "INTERRUPT",
+    "methods": {
+      "Base": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "OPENED_DIGEST",
+          "observed_user_selection": "LATER",
+          "delay_minutes": 120,
+          "reward": 0.25,
+          "observed_surface_match_status": "MATCH"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "ICL": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RAG": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "REINFORCE": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "OPENED_DIGEST",
+          "observed_user_selection": "LATER",
+          "delay_minutes": 120,
+          "reward": 0.25,
+          "observed_surface_match_status": "MATCH"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RFT": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": "censored_unknown"
+      },
+      "Online-SDFT": {
+        "action": "INTERRUPT",
+        "feedback": {
+          "action_taken": "INTERRUPT",
+          "channel": "push_notification",
+          "outcome": "OPENED_IMMEDIATELY",
+          "observed_user_selection": "INTERRUPT",
+          "delay_minutes": 1,
+          "reward": 5.0,
+          "observed_surface_match_status": "MATCH"
+        },
+        "teacher_rollout": "INTERRUPT",
+        "sdft_evidence_reliability": "reliable_singleton",
+        "sdft_fusion_weights": {
+          "teacher": 0.05,
+          "decision": 0.05,
+          "behavior": 0.9
+        },
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      }
+    }
+  },
+  {
+    "seed": 0,
+    "t": 147,
+    "regime": "on-call",
+    "category": "commerce",
+    "notification_title": "Payment failed for your Elm & Co. order",
+    "notification_body": "Update your payment method within 24 hours to keep the order.",
+    "gold_action_scoring_only": "LATER",
+    "methods": {
+      "Base": {
+        "action": "INTERRUPT",
+        "feedback": {
+          "action_taken": "INTERRUPT",
+          "channel": "push_notification",
+          "outcome": "OPENED_AFTER_DELAY",
+          "observed_user_selection": "LATER",
+          "delay_minutes": 120,
+          "reward": -1.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "ICL": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RAG": {
+        "action": "INTERRUPT",
+        "feedback": {
+          "action_taken": "INTERRUPT",
+          "channel": "push_notification",
+          "outcome": "OPENED_AFTER_DELAY",
+          "observed_user_selection": "LATER",
+          "delay_minutes": 120,
+          "reward": -1.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "REINFORCE": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RFT": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": "censored_unknown"
+      },
+      "Online-SDFT": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "OPENED_DIGEST",
+          "observed_user_selection": "LATER",
+          "delay_minutes": 120,
+          "reward": 0.25,
+          "observed_surface_match_status": "MATCH"
+        },
+        "teacher_rollout": "INTERRUPT",
+        "sdft_evidence_reliability": "ambiguous_digest_open",
+        "sdft_fusion_weights": {
+          "teacher": 0.0,
+          "decision": 1.0,
+          "behavior": 0.0
+        },
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      }
+    }
+  },
+  {
+    "seed": 0,
+    "t": 170,
+    "regime": "off-hours",
+    "category": "calendar",
+    "notification_title": "Beacon project sync tomorrow",
+    "notification_body": "A 30-minute meeting with Rina is scheduled for 2:00 PM.",
+    "gold_action_scoring_only": "LATER",
+    "methods": {
+      "Base": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "ICL": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RAG": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "REINFORCE": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RFT": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": "censored_unknown"
+      },
+      "Online-SDFT": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "OPENED_DIGEST",
+          "observed_user_selection": "LATER",
+          "delay_minutes": 120,
+          "reward": 0.25,
+          "observed_surface_match_status": "MATCH"
+        },
+        "teacher_rollout": "INTERRUPT",
+        "sdft_evidence_reliability": "ambiguous_digest_open",
+        "sdft_fusion_weights": {
+          "teacher": 0.0,
+          "decision": 1.0,
+          "behavior": 0.0
+        },
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      }
+    }
+  },
+  {
+    "seed": 0,
+    "t": 171,
+    "regime": "off-hours",
+    "category": "commerce",
+    "notification_title": "Payment failed for your Redwood Outfitters order",
+    "notification_body": "Update your payment method within 24 hours to keep the order.",
+    "gold_action_scoring_only": "LATER",
+    "methods": {
+      "Base": {
+        "action": "INTERRUPT",
+        "feedback": {
+          "action_taken": "INTERRUPT",
+          "channel": "push_notification",
+          "outcome": "OPENED_AFTER_DELAY",
+          "observed_user_selection": "LATER",
+          "delay_minutes": 120,
+          "reward": -1.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "ICL": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RAG": {
+        "action": "INTERRUPT",
+        "feedback": {
+          "action_taken": "INTERRUPT",
+          "channel": "push_notification",
+          "outcome": "OPENED_AFTER_DELAY",
+          "observed_user_selection": "LATER",
+          "delay_minutes": 120,
+          "reward": -1.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "REINFORCE": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RFT": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": "censored_unknown"
+      },
+      "Online-SDFT": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "OPENED_DIGEST",
+          "observed_user_selection": "LATER",
+          "delay_minutes": 120,
+          "reward": 0.25,
+          "observed_surface_match_status": "MATCH"
+        },
+        "teacher_rollout": "INTERRUPT",
+        "sdft_evidence_reliability": "ambiguous_digest_open",
+        "sdft_fusion_weights": {
+          "teacher": 0.0,
+          "decision": 1.0,
+          "behavior": 0.0
+        },
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      }
+    }
+  },
+  {
+    "seed": 0,
+    "t": 187,
+    "regime": "off-hours",
+    "category": "calendar",
+    "notification_title": "Growth review starts in 10 minutes",
+    "notification_body": "Leah asked you to join on time. Tap to open the video call.",
+    "gold_action_scoring_only": "INTERRUPT",
+    "methods": {
+      "Base": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "ICL": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RAG": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "REINFORCE": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RFT": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": "censored_unknown"
+      },
+      "Online-SDFT": {
+        "action": "INTERRUPT",
+        "feedback": {
+          "action_taken": "INTERRUPT",
+          "channel": "push_notification",
+          "outcome": "OPENED_IMMEDIATELY",
+          "observed_user_selection": "INTERRUPT",
+          "delay_minutes": 1,
+          "reward": 5.0,
+          "observed_surface_match_status": "MATCH"
+        },
+        "teacher_rollout": "INTERRUPT",
+        "sdft_evidence_reliability": "reliable_singleton",
+        "sdft_fusion_weights": {
+          "teacher": 0.05,
+          "decision": 0.05,
+          "behavior": 0.9
+        },
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      }
+    }
+  },
+  {
+    "seed": 0,
+    "t": 217,
+    "regime": "off-hours",
+    "category": "commerce",
+    "notification_title": "Your Pine & Main order has shipped",
+    "notification_body": "The package is expected to arrive tomorrow between 1:00 and 4:00 PM.",
+    "gold_action_scoring_only": "ARCHIVE",
+    "methods": {
+      "Base": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "DELETED_FROM_DIGEST",
+          "observed_user_selection": "ARCHIVE",
+          "delay_minutes": 120,
+          "reward": -1.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "ICL": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "DELETED_FROM_DIGEST",
+          "observed_user_selection": "ARCHIVE",
+          "delay_minutes": 120,
+          "reward": -1.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RAG": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "DELETED_FROM_DIGEST",
+          "observed_user_selection": "ARCHIVE",
+          "delay_minutes": 120,
+          "reward": -1.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "REINFORCE": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "DELETED_FROM_DIGEST",
+          "observed_user_selection": "ARCHIVE",
+          "delay_minutes": 120,
+          "reward": -1.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RFT": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "DELETED_FROM_DIGEST",
+          "observed_user_selection": "ARCHIVE",
+          "delay_minutes": 120,
+          "reward": -1.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": "INTERRUPT",
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": "INTERRUPT",
+        "rft_accepted": false,
+        "rft_reason": "teacher_mismatch"
+      },
+      "Online-SDFT": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": "censored_unknown",
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      }
+    }
+  },
+  {
+    "seed": 1,
+    "t": 94,
+    "regime": "on-call",
+    "category": "teammate",
+    "notification_title": "Leah asked about the Search dashboard",
+    "notification_body": "When you have a moment, could you check the updated labels?",
+    "gold_action_scoring_only": "LATER",
+    "methods": {
+      "Base": {
+        "action": "INTERRUPT",
+        "feedback": {
+          "action_taken": "INTERRUPT",
+          "channel": "push_notification",
+          "outcome": "OPENED_AFTER_DELAY",
+          "observed_user_selection": "LATER",
+          "delay_minutes": 120,
+          "reward": -1.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "ICL": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RAG": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "REINFORCE": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RFT": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": "censored_unknown"
+      },
+      "Online-SDFT": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "OPENED_DIGEST",
+          "observed_user_selection": "LATER",
+          "delay_minutes": 120,
+          "reward": 0.25,
+          "observed_surface_match_status": "MATCH"
+        },
+        "teacher_rollout": "INTERRUPT",
+        "sdft_evidence_reliability": "ambiguous_digest_open",
+        "sdft_fusion_weights": {
+          "teacher": 0.0,
+          "decision": 1.0,
+          "behavior": 0.0
+        },
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      }
+    }
+  },
+  {
+    "seed": 1,
+    "t": 100,
+    "regime": "on-call",
+    "category": "social",
+    "notification_title": "Kai sent you a message",
+    "notification_body": "That trail looks great. Are you free sometime this weekend?",
+    "gold_action_scoring_only": "ARCHIVE",
+    "methods": {
+      "Base": {
+        "action": "INTERRUPT",
+        "feedback": {
+          "action_taken": "INTERRUPT",
+          "channel": "push_notification",
+          "outcome": "DELETED_NOTIFICATION",
+          "observed_user_selection": "ARCHIVE",
+          "delay_minutes": 15,
+          "reward": -2.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "ICL": {
+        "action": "INTERRUPT",
+        "feedback": {
+          "action_taken": "INTERRUPT",
+          "channel": "push_notification",
+          "outcome": "DELETED_NOTIFICATION",
+          "observed_user_selection": "ARCHIVE",
+          "delay_minutes": 15,
+          "reward": -2.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RAG": {
+        "action": "INTERRUPT",
+        "feedback": {
+          "action_taken": "INTERRUPT",
+          "channel": "push_notification",
+          "outcome": "DELETED_NOTIFICATION",
+          "observed_user_selection": "ARCHIVE",
+          "delay_minutes": 15,
+          "reward": -2.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "REINFORCE": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "DELETED_FROM_DIGEST",
+          "observed_user_selection": "ARCHIVE",
+          "delay_minutes": 120,
+          "reward": -1.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      },
+      "RFT": {
+        "action": "LATER",
+        "feedback": {
+          "action_taken": "LATER",
+          "channel": "digest_inbox",
+          "outcome": "DELETED_FROM_DIGEST",
+          "observed_user_selection": "ARCHIVE",
+          "delay_minutes": 120,
+          "reward": -1.0,
+          "observed_surface_match_status": "MISS"
+        },
+        "teacher_rollout": "INTERRUPT",
+        "sdft_evidence_reliability": null,
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": "INTERRUPT",
+        "rft_accepted": false,
+        "rft_reason": "teacher_mismatch"
+      },
+      "Online-SDFT": {
+        "action": "ARCHIVE",
+        "feedback": {
+          "action_taken": "ARCHIVE",
+          "channel": "notification_not_delivered",
+          "outcome": "NO_OBSERVABLE_SELECTION",
+          "observed_user_selection": "UNKNOWN",
+          "delay_minutes": 240,
+          "reward": 0.0,
+          "observed_surface_match_status": "UNKNOWN"
+        },
+        "teacher_rollout": null,
+        "sdft_evidence_reliability": "censored_unknown",
+        "sdft_fusion_weights": null,
+        "rft_candidate_action": null,
+        "rft_accepted": null,
+        "rft_reason": null
+      }
+    }
+  }
+]

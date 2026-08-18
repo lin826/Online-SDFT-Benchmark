@@ -1,0 +1,913 @@
+{
+  "config": {
+    "seeds": 3,
+    "seed_start": 0,
+    "dataset_version": "semantic-title-body-sharp-t001",
+    "dataset_numpy_version": "2.4.6",
+    "runtime_numpy_version": "2.4.6",
+    "dataset_fingerprint": "986cdf1a7d5fcc04c2b33f1bf90a1fc4f24a97ee85e663370382d8a67e4c932d",
+    "method_dataset_versions": {
+      "Base": "semantic-title-body-sharp-t001",
+      "ICL": "semantic-title-body-sharp-t001",
+      "RAG": "semantic-title-body-sharp-t001",
+      "REINFORCE": "semantic-title-body-sharp-t001",
+      "RFT": "semantic-title-body-sharp-t001",
+      "Online-SDFT": "semantic-title-body-sharp-t001"
+    },
+    "method_dataset_fingerprints": {
+      "Base": "986cdf1a7d5fcc04c2b33f1bf90a1fc4f24a97ee85e663370382d8a67e4c932d",
+      "ICL": "986cdf1a7d5fcc04c2b33f1bf90a1fc4f24a97ee85e663370382d8a67e4c932d",
+      "RAG": "986cdf1a7d5fcc04c2b33f1bf90a1fc4f24a97ee85e663370382d8a67e4c932d",
+      "REINFORCE": "986cdf1a7d5fcc04c2b33f1bf90a1fc4f24a97ee85e663370382d8a67e4c932d",
+      "RFT": "986cdf1a7d5fcc04c2b33f1bf90a1fc4f24a97ee85e663370382d8a67e4c932d",
+      "Online-SDFT": "986cdf1a7d5fcc04c2b33f1bf90a1fc4f24a97ee85e663370382d8a67e4c932d"
+    },
+    "paired_method_stream": "one immutable generated event stream per seed is reused by all methods before any method-specific action or feedback randomness",
+    "gold_action_sampling": {
+      "distribution": "probability-power temperature scaling of normalized evaluator-utility weights",
+      "negative_utility_handling": "subtract the event minimum only when it is negative",
+      "temperature": 0.01,
+      "exponent": 100.0,
+      "formula": "q_i = p_i**(1 / temperature) / sum_j p_j**(1 / temperature)",
+      "numerical_implementation": "stable log space with exact zero support preserved",
+      "draw_timing": "once per event from an isolated seeded RNG"
+    },
+    "notification_context": "decision-relevant synthetic title/body + category + local time + regime + local importance",
+    "stream_length": 240,
+    "phase_length": 80,
+    "decision_interval_minutes": 15,
+    "digest_delivery_delay_minutes": 120,
+    "feedback_windows_minutes": {
+      "INTERRUPT_IMMEDIATE": 1,
+      "INTERRUPT_DISMISSAL": 15,
+      "INTERRUPT_DELAYED_READ": 120,
+      "LATER": 120,
+      "ARCHIVE": 240
+    },
+    "feedback_observation_matrix": {
+      "INTERRUPT": "immediate open -> INTERRUPT; delayed read -> LATER; notification deletion -> ARCHIVE",
+      "LATER": "digest open -> LATER, including after a missed immediate preference; digest deletion -> ARCHIVE",
+      "ARCHIVE": "no delivered surface -> UNKNOWN"
+    },
+    "observed_reward": {
+      "OPENED_IMMEDIATELY": 5.0,
+      "OPENED_AFTER_DELAY": -1.0,
+      "DELETED_NOTIFICATION": -2.0,
+      "OPENED_DIGEST": 0.25,
+      "DELETED_FROM_DIGEST": -1.0,
+      "NO_OBSERVABLE_SELECTION": 0.0
+    },
+    "actions": [
+      "INTERRUPT",
+      "LATER",
+      "ARCHIVE"
+    ],
+    "methods": [
+      "Base",
+      "ICL",
+      "RAG",
+      "REINFORCE",
+      "RFT",
+      "Online-SDFT"
+    ],
+    "student_model": "LiquidAI/LFM2.5-230M",
+    "student_policy": "next-token A/B/C probabilities; REINFORCE, RFT, and Online-SDFT each train the same reset-per-arm PEFT LoRA adapter",
+    "adaptive_model_sharing": "one physical Liquid model instance is reused sequentially; its LoRA adapter is reset to the identical initialization before every method and seed. Only RFT and Online-SDFT disable the adapter for same-model hindsight teaching",
+    "student_backbone": "frozen Liquid LFM base weights",
+    "student_backbone_trainable_parameters": 0,
+    "device": "mps",
+    "exploration_epsilon": 0.06,
+    "behavior_policy": "Base, ICL, RAG, and RFT use 6% epsilon-greedy; REINFORCE samples its current LoRA policy; Online-SDFT uses its configured uncertainty-triggered INTERRUPT probe and post-step-160 taper",
+    "randomness_pairing": "common per-seed action and feedback RNG streams across methods; method-specific RNG only for learning internals; RFT teacher candidate sampling uses an event-keyed deterministic uniform that cannot shift action, feedback, or replay draws",
+    "replay_size": 24,
+    "online_batch_size": 4,
+    "prompt_style": "causal_demos",
+    "history_rendering": "alternating notification/route demonstrations from reliable singleton callbacks only; ambiguous and UNKNOWN interactions remain retained but are not prompted",
+    "teacher_prompt_version": "concise-causal-v3",
+    "prompt_token_budget": 768,
+    "icl_examples": 3,
+    "rag_examples": 3,
+    "rag_text_weight": 0.5,
+    "rag_similarity": "0.50 metadata similarity (equal-weight category/regime match + importance + circular hour) + 0.50 visible title/body token Jaccard similarity",
+    "reinforce_lr": 0.0001,
+    "reinforce_batch_size": 8,
+    "reinforce_policy": "action-token REINFORCE trains only the same reset LFM PEFT LoRA adapter used by RFT and Online-SDFT",
+    "reinforce_trainable_parameters": 172032,
+    "online_reinforce_peft_architecture": {
+      "implementation": "peft.LoraConfig + peft.get_peft_model",
+      "peft_type": "LORA",
+      "task_type": "CAUSAL_LM",
+      "r": 4,
+      "lora_alpha": 8,
+      "lora_dropout": 0.0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "self_attn.out_proj"
+      ],
+      "layers_to_transform": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12
+      ],
+      "layers_pattern": "layers",
+      "bias": "none",
+      "init_lora_weights": true,
+      "ensure_weight_tying": false,
+      "merged_for_serving": false
+    },
+    "reinforce_initialization": "the common PEFT LoRA initialization restored before this arm",
+    "online_reinforce_settings": {
+      "learning_rate": 0.0001,
+      "batch_size": 8,
+      "baseline_step": 0.0,
+      "entropy_coef": 1.0,
+      "max_grad_norm": 1.0,
+      "reward_outcome_map": {
+        "OPENED_IMMEDIATELY": 5.0,
+        "OPENED_AFTER_DELAY": -1.0,
+        "DELETED_NOTIFICATION": -5.0,
+        "OPENED_DIGEST": 0.0,
+        "DELETED_FROM_DIGEST": -5.0,
+        "NO_OBSERVABLE_SELECTION": 0.0
+      }
+    },
+    "reinforce_training_reward": {
+      "source": "matured executed-surface factual outcome only",
+      "outcome_map": {
+        "OPENED_IMMEDIATELY": 5.0,
+        "OPENED_AFTER_DELAY": -1.0,
+        "DELETED_NOTIFICATION": -5.0,
+        "OPENED_DIGEST": 0.0,
+        "DELETED_FROM_DIGEST": -5.0,
+        "NO_OBSERVABLE_SELECTION": 0.0
+      },
+      "unknown_selection": "censored before outcome mapping; no gradient target",
+      "reported_metric": "learner-only shaping; rollout observed_feedback_reward and cumulative_observed_reward use the shared observed_reward map"
+    },
+    "reinforce_optimizer": "AdamW autograd over exactly 8 newly matured known factual-outcome callbacks; learner reward from reinforce_training_reward outcome map; each row consumed once; no replay; incomplete horizon batch not flushed",
+    "reinforce_baseline": "fixed zero causal baseline; step=0.0",
+    "reinforce_entropy_coef": 1.0,
+    "reinforce_max_grad_norm": 1.0,
+    "reinforce_capacity_match": {
+      "settings_source": "online_sdft_settings LoRA architecture",
+      "same_physical_model": true,
+      "same_frozen_base_model": true,
+      "same_lora_architecture": true,
+      "same_adapter_parameter_count": true,
+      "same_adapter_initialization": true,
+      "adapter_reset_before_arm": true,
+      "uses_hindsight_teacher": false
+    },
+    "rft_protocol_version": "teacher-categorical-k1-temperature8-singleton",
+    "rft_settings_provenance": "fixed-temperature8-lr7e-4-same-lora-architecture",
+    "online_rft_settings": {
+      "student_settings": {
+        "learning_rate": 0.0007,
+        "replay_size": 32,
+        "replay_prompt_examples": 0,
+        "batch_size": 8,
+        "update_steps": 2,
+        "warmup_examples": 4,
+        "lora_rank": 4,
+        "lora_alpha": 8,
+        "lora_dropout": 0.0,
+        "lora_target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "self_attn.out_proj"
+        ],
+        "lora_layers_to_transform": [
+          2,
+          4,
+          6,
+          8,
+          10,
+          12
+        ],
+        "lora_a_learning_rate_scale": 1.0,
+        "lm_head_lora_a_learning_rate_scale": null,
+        "optimizer_weight_decay": 0.0,
+        "optimizer_beta1": 0.9,
+        "max_grad_norm": 1.0,
+        "lm_head_learning_rate": null,
+        "ambiguous_replay_group_weight": 0.05,
+        "teacher_temperature": 1.0,
+        "reasoning_tokens": 0,
+        "target_mode": "causal_fusion",
+        "reliable_teacher_weight": 0.05,
+        "reliable_decision_weight": 0.05,
+        "reliable_behavior_weight": 0.9,
+        "ambiguous_teacher_weight": 0.0,
+        "ambiguous_decision_weight": 1.0,
+        "ambiguous_behavior_weight": 0.0,
+        "ambiguous_projection": "causal_support",
+        "replay_strategy": "selection_balanced",
+        "replay_recency_half_life": null,
+        "ambiguous_update_mode": "immediate",
+        "force_newest_every_step": true,
+        "base_kl_weight": 0.0,
+        "behavior_mode": "epsilon_greedy",
+        "behavior_epsilon": 0.06,
+        "behavior_epsilon_half_life": null,
+        "exploration_taper_start_step": null,
+        "exploration_taper_half_life": null,
+        "archive_probe_mix": 0.0,
+        "archive_policy_min_feedback": 0.0,
+        "interrupt_probe_mix": 0.0,
+        "interrupt_probe_half_life": null,
+        "interrupt_probe_max_confidence": 1.0,
+        "propensity_weight_mode": "none",
+        "propensity_weight_cap": 4.0
+      },
+      "candidate_count": 1,
+      "sampling_temperature": 8.0,
+      "sampling_mode": "categorical"
+    },
+    "online_rft_peft_architecture": {
+      "implementation": "peft.LoraConfig + peft.get_peft_model",
+      "peft_type": "LORA",
+      "task_type": "CAUSAL_LM",
+      "r": 4,
+      "lora_alpha": 8,
+      "lora_dropout": 0.0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "self_attn.out_proj"
+      ],
+      "layers_to_transform": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12
+      ],
+      "layers_pattern": "layers",
+      "bias": "none",
+      "init_lora_weights": true,
+      "ensure_weight_tying": false,
+      "merged_for_serving": false
+    },
+    "online_rft_trainable_parameters": 172032,
+    "rft_candidate_policy": "K=1 categorical sample at temperature 8 from the same model with its adapter disabled, which is the fixed-initial hindsight distribution used by Online-SDFT",
+    "rft_candidate_sampler": {
+      "scheme": "blake2b-event-keyed-uniform-inverse-cdf-v1",
+      "key_fields": [
+        "seed",
+        "event_id",
+        "t",
+        "rft_candidate_rng_offset"
+      ],
+      "inverse_cdf": true,
+      "stateful_rng": false
+    },
+    "rft_acceptance_filter": "accept only when the delayed public causal support is a reliable singleton containing the sampled teacher route; reject teacher mismatches and every ambiguous digest open; UNKNOWN is censored",
+    "rft_target": "one-hot cross-entropy target on the accepted sampled teacher route; rejected and censored rows never enter replay",
+    "rft_capacity_match": {
+      "settings_source": "online_rft_settings.student_settings",
+      "same_frozen_base_model": true,
+      "same_lora_architecture": true,
+      "same_adapter_parameter_count": true,
+      "same_adapter_initialization": true,
+      "same_replay_schedule": false,
+      "same_optimizer_hyperparameters": false,
+      "same_adapter_disabled_teacher": true,
+      "same_teacher_forward_budget": "one hindsight distribution for each matured non-UNKNOWN callback",
+      "configured_differences": "temperature-8 sample-filter hard targets and a tuned 7e-4 learning rate with replay-32 epsilon-greedy serving versus Online-SDFT's replay-64 recency/probe/taper schedule and reliability-conditioned soft targets"
+    },
+    "rft_candidate_rng_offset": 83,
+    "sdft_lr": 0.001,
+    "sdft_replay_size": 64,
+    "sdft_replay_prompt_examples": 0,
+    "sdft_batch_size": 8,
+    "sdft_update_steps": 2,
+    "sdft_warmup_examples": 4,
+    "sdft_distill_temperature": 1.0,
+    "online_sdft_settings": {
+      "learning_rate": 0.001,
+      "replay_size": 64,
+      "replay_prompt_examples": 0,
+      "batch_size": 8,
+      "update_steps": 2,
+      "warmup_examples": 4,
+      "lora_rank": 4,
+      "lora_alpha": 8,
+      "lora_dropout": 0.0,
+      "lora_target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "self_attn.out_proj"
+      ],
+      "lora_layers_to_transform": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12
+      ],
+      "lora_a_learning_rate_scale": 1.0,
+      "lm_head_lora_a_learning_rate_scale": null,
+      "optimizer_weight_decay": 0.0,
+      "optimizer_beta1": 0.9,
+      "max_grad_norm": 1.0,
+      "lm_head_learning_rate": null,
+      "ambiguous_replay_group_weight": 0.05,
+      "teacher_temperature": 1.0,
+      "reasoning_tokens": 0,
+      "target_mode": "causal_fusion",
+      "reliable_teacher_weight": 0.05,
+      "reliable_decision_weight": 0.05,
+      "reliable_behavior_weight": 0.9,
+      "ambiguous_teacher_weight": 0.0,
+      "ambiguous_decision_weight": 1.0,
+      "ambiguous_behavior_weight": 0.0,
+      "ambiguous_projection": "causal_support",
+      "replay_strategy": "selection_balanced",
+      "replay_recency_half_life": 32.0,
+      "ambiguous_update_mode": "immediate",
+      "force_newest_every_step": true,
+      "base_kl_weight": 0.0,
+      "behavior_mode": "uncertainty_interrupt_probe",
+      "behavior_epsilon": 0.02,
+      "behavior_epsilon_half_life": null,
+      "exploration_taper_start_step": 160,
+      "exploration_taper_half_life": 5.0,
+      "archive_probe_mix": 0.0,
+      "archive_policy_min_feedback": 0.0,
+      "interrupt_probe_mix": 0.15,
+      "interrupt_probe_half_life": 80.0,
+      "interrupt_probe_max_confidence": 0.6,
+      "propensity_weight_mode": "none",
+      "propensity_weight_cap": 4.0
+    },
+    "adaptive_default_configuration_provenance": {
+      "Online-SDFT": {
+        "selection_seeds": [
+          0,
+          1,
+          2
+        ],
+        "disjoint_confirmation": false,
+        "interpretation": "user-requested in-sample tuning on the canonical streams"
+      },
+      "RFT": {
+        "selection_seeds": [
+          1200
+        ],
+        "disjoint_confirmation": false,
+        "interpretation": "single-stream temperature and learning-rate screen"
+      },
+      "REINFORCE": {
+        "selection_seeds": [
+          0,
+          1,
+          2
+        ],
+        "disjoint_confirmation": false,
+        "selection_rule": "strict candidate gate: pooled exact-action correct > Base and pooled total regret < Base; rank accuracy first, then regret",
+        "interpretation": "user-requested in-sample tuning on the canonical streams; no disjoint confirmation set"
+      }
+    },
+    "online_sdft_peft_architecture": {
+      "implementation": "peft.LoraConfig + peft.get_peft_model",
+      "peft_type": "LORA",
+      "task_type": "CAUSAL_LM",
+      "r": 4,
+      "lora_alpha": 8,
+      "lora_dropout": 0.0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "self_attn.out_proj"
+      ],
+      "layers_to_transform": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12
+      ],
+      "layers_pattern": "layers",
+      "bias": "none",
+      "init_lora_weights": true,
+      "ensure_weight_tying": false,
+      "merged_for_serving": false
+    },
+    "online_sdft_student": "PEFT LoRA adapter trained online on the same Liquid LFM used for hindsight teaching; base-model weights stay frozen and the adapter is never merged",
+    "online_sdft_trainable_parameters": 172032,
+    "online_sdft_optimizer": {
+      "type": "AdamW",
+      "learning_rate": 0.001,
+      "lm_head_learning_rate": null,
+      "lora_a_learning_rate_scale": 1.0,
+      "lm_head_lora_a_learning_rate_scale": null,
+      "weight_decay": 0.0,
+      "max_grad_norm": 1.0,
+      "batch_size": 8,
+      "update_steps_per_release": 2
+    },
+    "sdft_replay_prompt_policy": "disabled; serving uses only learned finite parameters",
+    "sdft_evidence_reliability": {
+      "reliable_singleton": {
+        "callbacks": "immediate/delayed interrupt open or deletion from a delivered surface",
+        "teacher_weight": 0.05,
+        "decision_weight": 0.05,
+        "behavior_weight": 0.9
+      },
+      "ambiguous_digest_open": {
+        "callbacks": "digest open supports INTERRUPT or LATER without distinguishing them",
+        "teacher_weight": 0.0,
+        "decision_weight": 1.0,
+        "behavior_weight": 0.0
+      },
+      "censored_unknown": "no target or update"
+    },
+    "teacher_model": "LiquidAI/LFM2.5-230M",
+    "teacher_student_model_sharing": {
+      "model_instances": 1,
+      "same_base_parameters": true,
+      "student_forward": "LoRA adapter enabled",
+      "teacher_forward": "same model with LoRA adapter disabled",
+      "teacher_reference": "fixed initial frozen base-model policy",
+      "separate_teacher_checkpoint": false
+    },
+    "teacher_policy": "the student and teacher are one shared Liquid LFM model; teacher forwards disable the student's LoRA adapter, so the frozen base is the fixed-initial reference for the full run; notification title/body + metadata + decision-time importance + delayed observed user selection are supplied for the executed route only; explicit delivery-surface guidance keeps a digest open ambiguous between INTERRUPT and LATER; UNKNOWN stays censored; no scalar reward, counterfactual, shadow policy, or evaluator label",
+    "teacher_temperature": 1.0,
+    "evaluation": "prequential one-stream; sampled-preference accuracy and utility-optimal regret; predict then learn",
+    "update_timing": "feedback is queued until its action-specific observation window closes; no end-of-horizon flush",
+    "learning_signal": "evidence-reliability-conditioned same-LM soft hindsight target for Online-SDFT; the teacher's argmax is diagnostic only; RFT draws one separate categorical teacher candidate and keeps its hard target only after reliable singleton verification; ICL/RAG retain direct completed interactions but prompt only reliable singleton route evidence; learner-only scalar mapped from the matured executed-surface factual outcome for REINFORCE, while reported observed reward retains the shared environment map; hidden sampled preference for shared accuracy only; utility-optimal route for regret only",
+    "source_fingerprint": {
+      "algorithm": "sha256",
+      "files": {
+        "online_sdft/__init__.py": "12f2462b5c4a0c6ad3a7e2ae76e6f49dc16c14cb60177df9ae3ab22a537eeb1d",
+        "online_sdft/config.py": "11bb28cd9ce56ac6de910060c77ee71be195e53f0a262b16e240a1856c496cdc",
+        "online_sdft/environment.py": "027196ea15e1e289384cba165ec80b80cb6b14be2009fcbb8d1104328d44853f",
+        "online_sdft/experiment.py": "140023f7e9f89d7902e74291bd82a33e2591f22d9357f1ed77c7b8f6e4569d67",
+        "online_sdft/methods.py": "b475f0cb6891211461d929633e6d80faddb312ae918310542e373e429d3a3265",
+        "online_sdft/privilege.py": "81cfb83dfa58f10e7a039e2214eaf24834af5c31c55de46ed2219fcc286437b6",
+        "online_sdft/reporting.py": "7f2b6ee59278a275203c1bf274d51d19fa2b87151637de541a5616f4937a9d78",
+        "requirements.txt": "bc99d57546d0c65338ad87e02bcaaa639e6415b1a7068ae43c09059cf2bad3ce",
+        "run.py": "14f00e7f12a472310910b12ae258ba42f7fce7874decfc86595e6ee7064fd3fc",
+        "scripts/run_mps_seeds_and_merge.sh": "654bd59720321f316945aef187eba2e370f480184c0199d95b5e7c600c22a3ab"
+      },
+      "sha256": "4d293549d5a14fd8ac4d3a7ceb3e1d0db0d32dde943f9cd08db2e12ee652f31e"
+    }
+  },
+  "summary": {
+    "Base": {
+      "online_accuracy": {
+        "mean": 0.2819444444444445,
+        "std": 0.020553678592984355,
+        "ci95": 0.02325867686225327
+      },
+      "cum_regret": {
+        "mean": 164.6662595933986,
+        "std": 2.3511903157987324,
+        "ci95": 2.660622309015181
+      },
+      "regret_per_decision": {
+        "mean": 0.6861094149724941,
+        "std": 0.00979662631582806,
+        "ci95": 0.011085926287563264
+      },
+      "cumulative_observed_reward": {
+        "mean": 61.416666666666664,
+        "std": 29.590257405661973,
+        "ci95": 33.48452843395654
+      },
+      "observed_reward_per_decision": {
+        "mean": 0.25590277777777776,
+        "std": 0.12329273919025824,
+        "ci95": 0.13951886847481895
+      },
+      "online_accuracy_weekday": {
+        "mean": 0.24166666666666667,
+        "std": 0.007216878364870329,
+        "ci95": 0.008166666666666674
+      },
+      "online_accuracy_on-call": {
+        "mean": 0.2916666666666667,
+        "std": 0.0438985573035531,
+        "ci95": 0.04967589399743548
+      },
+      "online_accuracy_off-hours": {
+        "mean": 0.3125,
+        "std": 0.025000000000000022,
+        "ci95": 0.02829016319029169
+      },
+      "regret_weekday": {
+        "mean": 63.2090178663575,
+        "std": 4.42744807722689,
+        "ci95": 5.010129144851671
+      },
+      "regret_on-call": {
+        "mean": 45.381103423131776,
+        "std": 4.67521281039413,
+        "ci95": 5.290501334215682
+      },
+      "regret_off-hours": {
+        "mean": 56.07613830390931,
+        "std": 2.115681733765724,
+        "ci95": 2.394119260278061
+      }
+    },
+    "ICL": {
+      "online_accuracy": {
+        "mean": 0.4222222222222222,
+        "std": 0.0315494908100015,
+        "ci95": 0.035701609743421986
+      },
+      "cum_regret": {
+        "mean": 131.48337697911185,
+        "std": 0.5326982790247798,
+        "ci95": 0.6028048497919418
+      },
+      "regret_per_decision": {
+        "mean": 0.5478474040796327,
+        "std": 0.002219576162603263,
+        "ci95": 0.002511686874133106
+      },
+      "cumulative_observed_reward": {
+        "mean": 2.0,
+        "std": 11.6940155635265,
+        "ci95": 13.23302434567901
+      },
+      "observed_reward_per_decision": {
+        "mean": 0.008333333333333337,
+        "std": 0.048725064848027085,
+        "ci95": 0.055137601440329205
+      },
+      "online_accuracy_weekday": {
+        "mean": 0.4375,
+        "std": 0.054486236794258416,
+        "ci95": 0.061656981221377784
+      },
+      "online_accuracy_on-call": {
+        "mean": 0.425,
+        "std": 0.012500000000000011,
+        "ci95": 0.014145081595145844
+      },
+      "online_accuracy_off-hours": {
+        "mean": 0.4041666666666666,
+        "std": 0.040181878170803986,
+        "ci95": 0.04547007562977852
+      },
+      "regret_weekday": {
+        "mean": 39.086082589295025,
+        "std": 1.3153354251407734,
+        "ci95": 1.4884421530881657
+      },
+      "regret_on-call": {
+        "mean": 43.78614918681651,
+        "std": 2.9516508219021493,
+        "ci95": 3.340107337294813
+      },
+      "regret_off-hours": {
+        "mean": 48.6111452030003,
+        "std": 2.781020799090564,
+        "ci95": 3.1470212896746954
+      }
+    },
+    "RAG": {
+      "online_accuracy": {
+        "mean": 0.49999999999999994,
+        "std": 0.06508541396588877,
+        "ci95": 0.07365107929610726
+      },
+      "cum_regret": {
+        "mean": 106.62100897488763,
+        "std": 26.91169087529549,
+        "ci95": 30.4534450635517
+      },
+      "regret_per_decision": {
+        "mean": 0.4442542040620318,
+        "std": 0.11213204531373122,
+        "ci95": 0.12688935443146543
+      },
+      "cumulative_observed_reward": {
+        "mean": 75.91666666666667,
+        "std": 82.49482306989532,
+        "ci95": 93.35168028006305
+      },
+      "observed_reward_per_decision": {
+        "mean": 0.3163194444444445,
+        "std": 0.3437284294578972,
+        "ci95": 0.3889653345002627
+      },
+      "online_accuracy_weekday": {
+        "mean": 0.4291666666666667,
+        "std": 0.040181878170803965,
+        "ci95": 0.0454700756297785
+      },
+      "online_accuracy_on-call": {
+        "mean": 0.4875,
+        "std": 0.12054563451241193,
+        "ci95": 0.13641022688933555
+      },
+      "online_accuracy_off-hours": {
+        "mean": 0.5833333333333334,
+        "std": 0.1040832999733066,
+        "ci95": 0.11778134166515696
+      },
+      "regret_weekday": {
+        "mean": 39.73812138782453,
+        "std": 0.7535895162324238,
+        "ci95": 0.8527668157083287
+      },
+      "regret_on-call": {
+        "mean": 35.915646732141234,
+        "std": 12.584097970655794,
+        "ci95": 14.240247407698822
+      },
+      "regret_off-hours": {
+        "mean": 30.967240854921855,
+        "std": 14.093924857013986,
+        "ci95": 15.94877736786535
+      }
+    },
+    "REINFORCE": {
+      "online_accuracy": {
+        "mean": 0.3208333333333333,
+        "std": 0.01816207893141947,
+        "ci95": 0.020552327073792596
+      },
+      "cum_regret": {
+        "mean": 157.99204518536425,
+        "std": 2.2602223580317538,
+        "ci95": 2.5576823742025656
+      },
+      "regret_per_decision": {
+        "mean": 0.658300188272351,
+        "std": 0.009417593158465656,
+        "ci95": 0.010657009892510708
+      },
+      "cumulative_observed_reward": {
+        "mean": -21.5,
+        "std": 37.27012878968893,
+        "ci95": 42.17512102333949
+      },
+      "observed_reward_per_decision": {
+        "mean": -0.08958333333333333,
+        "std": 0.15529220329037058,
+        "ci95": 0.17572967093058128
+      },
+      "online_accuracy_weekday": {
+        "mean": 0.27499999999999997,
+        "std": 0.024999999999999994,
+        "ci95": 0.028290163190291658
+      },
+      "online_accuracy_on-call": {
+        "mean": 0.3083333333333333,
+        "std": 0.0721687836487032,
+        "ci95": 0.08166666666666665
+      },
+      "online_accuracy_off-hours": {
+        "mean": 0.37916666666666665,
+        "std": 0.026020824993326683,
+        "ci95": 0.029445335416289277
+      },
+      "regret_weekday": {
+        "mean": 55.45599264874078,
+        "std": 4.231605820912908,
+        "ci95": 4.788512769224572
+      },
+      "regret_on-call": {
+        "mean": 49.973657449657175,
+        "std": 7.993267090719821,
+        "ci95": 9.045233216802066
+      },
+      "regret_off-hours": {
+        "mean": 52.56239508696628,
+        "std": 5.145253072301457,
+        "ci95": 5.82240196283031
+      }
+    },
+    "RFT": {
+      "online_accuracy": {
+        "mean": 0.5277777777777778,
+        "std": 0.02294821061369211,
+        "ci95": 0.02596834492746132
+      },
+      "cum_regret": {
+        "mean": 105.26007413936158,
+        "std": 13.539359581238507,
+        "ci95": 15.321227681811056
+      },
+      "regret_per_decision": {
+        "mean": 0.4385836422473399,
+        "std": 0.05641399825516044,
+        "ci95": 0.06383844867421272
+      },
+      "cumulative_observed_reward": {
+        "mean": 87.25,
+        "std": 52.94985835675106,
+        "ci95": 59.918405352612645
+      },
+      "observed_reward_per_decision": {
+        "mean": 0.3635416666666667,
+        "std": 0.22062440981979609,
+        "ci95": 0.24966002230255271
+      },
+      "online_accuracy_weekday": {
+        "mean": 0.3958333333333333,
+        "std": 0.061661035778953086,
+        "ci95": 0.06977603058675984
+      },
+      "online_accuracy_on-call": {
+        "mean": 0.55,
+        "std": 0.03750000000000003,
+        "ci95": 0.04243524478543753
+      },
+      "online_accuracy_off-hours": {
+        "mean": 0.6375000000000001,
+        "std": 0.04999999999999999,
+        "ci95": 0.056580326380583315
+      },
+      "regret_weekday": {
+        "mean": 46.5946221550592,
+        "std": 5.139841350558709,
+        "ci95": 5.816278023180599
+      },
+      "regret_on-call": {
+        "mean": 30.085132311407346,
+        "std": 6.9525644110697415,
+        "ci95": 7.867567271207082
+      },
+      "regret_off-hours": {
+        "mean": 28.58031967289502,
+        "std": 2.9456704229249344,
+        "ci95": 3.3333398787744746
+      }
+    },
+    "Online-SDFT": {
+      "online_accuracy": {
+        "mean": 0.7027777777777778,
+        "std": 0.022948210613692073,
+        "ci95": 0.025968344927461275
+      },
+      "cum_regret": {
+        "mean": 44.76272608109617,
+        "std": 4.035879125779252,
+        "ci95": 4.567027163383468
+      },
+      "regret_per_decision": {
+        "mean": 0.18651135867123406,
+        "std": 0.016816163024080222,
+        "ci95": 0.01902927984743112
+      },
+      "cumulative_observed_reward": {
+        "mean": 229.08333333333334,
+        "std": 17.439777330382785,
+        "ci95": 19.734965867155122
+      },
+      "observed_reward_per_decision": {
+        "mean": 0.9545138888888888,
+        "std": 0.07266573887659494,
+        "ci95": 0.08222902444647968
+      },
+      "online_accuracy_weekday": {
+        "mean": 0.5166666666666666,
+        "std": 0.06166103577895311,
+        "ci95": 0.06977603058675987
+      },
+      "online_accuracy_on-call": {
+        "mean": 0.775,
+        "std": 0.012500000000000011,
+        "ci95": 0.014145081595145844
+      },
+      "online_accuracy_off-hours": {
+        "mean": 0.8166666666666668,
+        "std": 0.019094065395649326,
+        "ci95": 0.021606969040360816
+      },
+      "regret_weekday": {
+        "mean": 31.311517408070372,
+        "std": 6.958661619992804,
+        "ci95": 7.874466912624631
+      },
+      "regret_on-call": {
+        "mean": 8.7458441402708,
+        "std": 1.4584357573022042,
+        "ci95": 1.6503754230654386
+      },
+      "regret_off-hours": {
+        "mean": 4.705364532755003,
+        "std": 1.8261773294372552,
+        "ci95": 2.066514186567639
+      }
+    }
+  },
+  "qualitative_examples": 8,
+  "rft_diagnostics": {
+    "per_seed": {
+      "0": {
+        "attempted": 110,
+        "accepted": 18,
+        "rejected": 92,
+        "rejection_reasons": {
+          "ambiguous_unverified": 49,
+          "teacher_mismatch": 43
+        },
+        "acceptance_rate": 0.16363636363636364,
+        "proposal_counts": {
+          "INTERRUPT": 46,
+          "LATER": 39,
+          "ARCHIVE": 25
+        },
+        "accepted_counts": {
+          "INTERRUPT": 5,
+          "LATER": 6,
+          "ARCHIVE": 7
+        },
+        "mean_proposal_entropy": 1.060851240681275,
+        "update_count": 30,
+        "censored_unknown": 118,
+        "pending_after_horizon": 12
+      },
+      "1": {
+        "attempted": 96,
+        "accepted": 32,
+        "rejected": 64,
+        "rejection_reasons": {
+          "ambiguous_unverified": 19,
+          "teacher_mismatch": 45
+        },
+        "acceptance_rate": 0.3333333333333333,
+        "proposal_counts": {
+          "INTERRUPT": 41,
+          "LATER": 27,
+          "ARCHIVE": 28
+        },
+        "accepted_counts": {
+          "INTERRUPT": 19,
+          "LATER": 6,
+          "ARCHIVE": 7
+        },
+        "mean_proposal_entropy": 1.061760813998972,
+        "update_count": 58,
+        "censored_unknown": 135,
+        "pending_after_horizon": 9
+      },
+      "2": {
+        "attempted": 105,
+        "accepted": 25,
+        "rejected": 80,
+        "rejection_reasons": {
+          "ambiguous_unverified": 34,
+          "teacher_mismatch": 46
+        },
+        "acceptance_rate": 0.23809523809523808,
+        "proposal_counts": {
+          "INTERRUPT": 50,
+          "LATER": 32,
+          "ARCHIVE": 23
+        },
+        "accepted_counts": {
+          "INTERRUPT": 12,
+          "LATER": 4,
+          "ARCHIVE": 9
+        },
+        "mean_proposal_entropy": 1.0618819609054626,
+        "update_count": 44,
+        "censored_unknown": 127,
+        "pending_after_horizon": 8
+      }
+    },
+    "total": {
+      "attempted": 311,
+      "accepted": 75,
+      "rejected": 236,
+      "rejection_reasons": {
+        "ambiguous_unverified": 102,
+        "teacher_mismatch": 134
+      },
+      "acceptance_rate": 0.24115755627009647,
+      "proposal_counts": {
+        "INTERRUPT": 137,
+        "LATER": 98,
+        "ARCHIVE": 76
+      },
+      "accepted_counts": {
+        "INTERRUPT": 36,
+        "LATER": 16,
+        "ARCHIVE": 23
+      },
+      "mean_proposal_entropy": 1.0614800016524604,
+      "update_count": 132,
+      "censored_unknown": 380,
+      "pending_after_horizon": 29
+    }
+  }
+}

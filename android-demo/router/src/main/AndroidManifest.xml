@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+      Package visibility for label lookups only. Without this, Android 11+ hides
+      most installed packages and every notification falls back to a guess made
+      from the package name ("Gm" instead of "Gmail"). Scoped to launchable apps
+      rather than QUERY_ALL_PACKAGES.
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+        </intent>
+    </queries>
+
+    <application
+        android:name=".OnlineSdftApplication"
+        android:allowBackup="false"
+        android:icon="@drawable/ic_router"
+        android:label="Tact"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.OnlineSdft"
+        android:usesCleartextTraffic="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".notification.RouterNotificationListenerService"
+            android:exported="false"
+            android:label="Tact"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".notification.DigestActionReceiver"
+            android:exported="false" />
+    </application>
+</manifest>

@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Notebooks / tooling
+.ipynb_checkpoints/
+/notebook_reproduction_outputs/
+.claude/
+# Keep the Markdown article and maintainer guide tracked as reproducible sources.
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Generated experiment artifacts. Keep only the compact canonical results.
+outputs/
+!outputs/
+outputs/*
+!outputs/bandit/
+outputs/bandit/*
+!outputs/bandit/per_seed_metrics.csv
+!outputs/bandit/summary.json
+!outputs/bandit/qualitative_examples.json
+!outputs/ablation/
+outputs/ablation/*
+!outputs/ablation/online_sdft_tricks/
+outputs/ablation/online_sdft_tricks/*
+!outputs/ablation/online_sdft_tricks/per_seed_metrics.csv
+!outputs/ablation/online_sdft_tricks/summary.json
+
+# Keep exploratory search machinery and results off the release branch.
+/scripts/tune_*.py
+/tests/test_tune_*.py
+/outputs/tuning/
+/outputs/sweeps/
+/outputs/*tune*/
+
+# Local run logs
+logs/

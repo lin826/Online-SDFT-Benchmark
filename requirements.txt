@@ -1,0 +1,10 @@
+matplotlib>=3.8
+Markdown==3.10.3
+nbformat>=5.10
+notebook>=7.0
+numpy==2.4.6
+peft==0.19.1
+Pillow>=10.0
+pytest>=8.0
+torch==2.13.0
+transformers==5.13.1

@@ -1,0 +1,708 @@
+{
+  "design": {
+    "full": "released configuration",
+    "held_constant": "hindsight target, LoRA architecture, optimizer, two update steps, four-lesson warmup, and event streams",
+    "neither": "greedy serving plus newest-only updates",
+    "no_exploration": "greedy serving; epsilon, uncertainty probe, and taper off",
+    "no_replay_newest_only": "batch size one; both optimizer steps use only newest lesson",
+    "pure_greedy_runner_note": "the isolated runner permits a logged feedback-surface propensity of zero when greedy serving selects ARCHIVE; propensity weighting is disabled in every variant"
+  },
+  "paired_factor_effects": {
+    "accuracy_interaction": {
+      "ci95": 0.11571846155942021,
+      "mean": 0.040277777777777746,
+      "std": 0.1022603340788887
+    },
+    "exploration_accuracy_gain": {
+      "ci95": 0.012984172463730658,
+      "mean": -0.011805555555555569,
+      "std": 0.011474105306846054
+    },
+    "exploration_regret_reduction": {
+      "ci95": 2.977453899264765,
+      "mean": 6.377752467050878,
+      "std": 2.6311741993472646
+    },
+    "regret_interaction": {
+      "ci95": 24.67556261328607,
+      "mean": -21.72465049152446,
+      "std": 21.805779669162515
+    },
+    "replay_accuracy_gain": {
+      "ci95": 0.01800580753363408,
+      "mean": 0.28680555555555554,
+      "std": 0.015911721163041164
+    },
+    "replay_regret_reduction": {
+      "ci95": 5.35181690669481,
+      "mean": 79.27949340322074,
+      "std": 4.72939734449057
+    }
+  },
+  "per_seed": [
+    {
+      "cum_regret": 43.65076131245935,
+      "cumulative_observed_reward": 224.0,
+      "observed_reward_per_decision": 0.9333333333333333,
+      "online_accuracy": 0.6875,
+      "online_accuracy_off-hours": 0.8,
+      "online_accuracy_on-call": 0.775,
+      "online_accuracy_weekday": 0.4875,
+      "regret_off-hours": 4.987739034566966,
+      "regret_on-call": 7.819245369756544,
+      "regret_per_decision": 0.1818781721352473,
+      "regret_weekday": 30.84377690813586,
+      "seed": 0,
+      "variant": "full"
+    },
+    {
+      "cum_regret": 52.93531996227061,
+      "cumulative_observed_reward": 220.75,
+      "observed_reward_per_decision": 0.9197916666666667,
+      "online_accuracy": 0.7416666666666667,
+      "online_accuracy_off-hours": 0.875,
+      "online_accuracy_on-call": 0.8,
+      "online_accuracy_weekday": 0.55,
+      "regret_off-hours": 9.886149347715696,
+      "regret_on-call": 12.634996071451226,
+      "regret_per_decision": 0.22056383317612754,
+      "regret_weekday": 30.4141745431037,
+      "seed": 0,
+      "variant": "no_exploration"
+    },
+    {
+      "cum_regret": 127.14842635890238,
+      "cumulative_observed_reward": -4.0,
+      "observed_reward_per_decision": -0.016666666666666666,
+      "online_accuracy": 0.4125,
+      "online_accuracy_off-hours": 0.4125,
+      "online_accuracy_on-call": 0.4125,
+      "online_accuracy_weekday": 0.4125,
+      "regret_off-hours": 45.618604957786395,
+      "regret_on-call": 43.374145686442155,
+      "regret_per_decision": 0.5297851098287599,
+      "regret_weekday": 38.15567571467376,
+      "seed": 0,
+      "variant": "no_replay_newest_only"
+    },
+    {
+      "cum_regret": 133.48607765771257,
+      "cumulative_observed_reward": -16.0,
+      "observed_reward_per_decision": -0.06666666666666667,
+      "online_accuracy": 0.4083333333333333,
+      "online_accuracy_off-hours": 0.4125,
+      "online_accuracy_on-call": 0.425,
+      "online_accuracy_weekday": 0.3875,
+      "regret_off-hours": 45.618604957786395,
+      "regret_on-call": 42.26129445295323,
+      "regret_per_decision": 0.5561919902404691,
+      "regret_weekday": 45.606178246972846,
+      "seed": 0,
+      "variant": "neither"
+    },
+    {
+      "cum_regret": 49.238015940324345,
+      "cumulative_observed_reward": 248.5,
+      "observed_reward_per_decision": 1.0354166666666667,
+      "online_accuracy": 0.6916666666666667,
+      "online_accuracy_off-hours": 0.8375,
+      "online_accuracy_on-call": 0.7625,
+      "online_accuracy_weekday": 0.475,
+      "regret_off-hours": 2.7544474348565435,
+      "regret_on-call": 7.991319278340035,
+      "regret_per_decision": 0.20515839975135144,
+      "regret_weekday": 38.49224922712778,
+      "seed": 1,
+      "variant": "full"
+    },
+    {
+      "cum_regret": 60.87229976477603,
+      "cumulative_observed_reward": 204.25,
+      "observed_reward_per_decision": 0.8510416666666667,
+      "online_accuracy": 0.6791666666666667,
+      "online_accuracy_off-hours": 0.7375,
+      "online_accuracy_on-call": 0.725,
+      "online_accuracy_weekday": 0.575,
+      "regret_off-hours": 15.84573272741244,
+      "regret_on-call": 16.156582023714574,
+      "regret_per_decision": 0.25363458235323344,
+      "regret_weekday": 28.86998501364904,
+      "seed": 1,
+      "variant": "no_exploration"
+    },
+    {
+      "cum_regret": 131.34966151646648,
+      "cumulative_observed_reward": 16.5,
+      "observed_reward_per_decision": 0.06875,
+      "online_accuracy": 0.39166666666666666,
+      "online_accuracy_off-hours": 0.4,
+      "online_accuracy_on-call": 0.3875,
+      "online_accuracy_weekday": 0.3875,
+      "regret_off-hours": 46.91867203467071,
+      "regret_on-call": 43.68803440899467,
+      "regret_per_decision": 0.5472902563186104,
+      "regret_weekday": 40.7429550728011,
+      "seed": 1,
+      "variant": "no_replay_newest_only"
+    },
+    {
+      "cum_regret": 126.39761498611574,
+      "cumulative_observed_reward": 8.0,
+      "observed_reward_per_decision": 0.03333333333333333,
+      "online_accuracy": 0.4125,
+      "online_accuracy_off-hours": 0.45,
+      "online_accuracy_on-call": 0.3875,
+      "online_accuracy_weekday": 0.4,
+      "regret_off-hours": 43.537897719034135,
+      "regret_on-call": 43.434462387820616,
+      "regret_per_decision": 0.5266567291088156,
+      "regret_weekday": 39.42525487926099,
+      "seed": 1,
+      "variant": "neither"
+    },
+    {
+      "cum_regret": 41.399400990504816,
+      "cumulative_observed_reward": 214.75,
+      "observed_reward_per_decision": 0.8947916666666667,
+      "online_accuracy": 0.7291666666666666,
+      "online_accuracy_off-hours": 0.8125,
+      "online_accuracy_on-call": 0.7875,
+      "online_accuracy_weekday": 0.5875,
+      "regret_off-hours": 6.373907128841501,
+      "regret_on-call": 10.42696777271582,
+      "regret_per_decision": 0.1724975041271034,
+      "regret_weekday": 24.598526088947484,
+      "seed": 2,
+      "variant": "full"
+    },
+    {
+      "cum_regret": 72.20079165468118,
+      "cumulative_observed_reward": 134.25,
+      "observed_reward_per_decision": 0.559375,
+      "online_accuracy": 0.6625,
+      "online_accuracy_off-hours": 0.8125,
+      "online_accuracy_on-call": 0.65,
+      "online_accuracy_weekday": 0.525,
+      "regret_off-hours": 12.764213713596423,
+      "regret_on-call": 23.122308472960817,
+      "regret_per_decision": 0.30083663189450494,
+      "regret_weekday": 36.31426946812395,
+      "seed": 2,
+      "variant": "no_exploration"
+    },
+    {
+      "cum_regret": 146.21554631486856,
+      "cumulative_observed_reward": -32.25,
+      "observed_reward_per_decision": -0.134375,
+      "online_accuracy": 0.38333333333333336,
+      "online_accuracy_off-hours": 0.45,
+      "online_accuracy_on-call": 0.3125,
+      "online_accuracy_weekday": 0.3875,
+      "regret_off-hours": 46.965617284003955,
+      "regret_on-call": 54.40899658153107,
+      "regret_per_decision": 0.609231442978619,
+      "regret_weekday": 44.84093244933347,
+      "seed": 2,
+      "variant": "no_replay_newest_only"
+    },
+    {
+      "cum_regret": 131.37622321027507,
+      "cumulative_observed_reward": -4.75,
+      "observed_reward_per_decision": -0.019791666666666666,
+      "online_accuracy": 0.4625,
+      "online_accuracy_off-hours": 0.45,
+      "online_accuracy_on-call": 0.475,
+      "online_accuracy_weekday": 0.4625,
+      "regret_off-hours": 46.965617284003955,
+      "regret_on-call": 44.12948946522341,
+      "regret_per_decision": 0.5474009300428128,
+      "regret_weekday": 40.28111646104766,
+      "seed": 2,
+      "variant": "neither"
+    }
+  ],
+  "provenance": {
+    "dataset_fingerprint": "986cdf1a7d5fcc04c2b33f1bf90a1fc4f24a97ee85e663370382d8a67e4c932d",
+    "dataset_numpy_version": "2.4.6",
+    "dataset_version": "semantic-title-body-sharp-t001",
+    "decisions_per_seed": 240,
+    "device": "mps",
+    "elapsed_seconds": 665.343966960907,
+    "model_id": "LiquidAI/LFM2.5-230M",
+    "runtime_numpy_version": "2.4.6",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "source_commit": "c13490bf604aba119b7c251dfff8a8b580f6f01f"
+  },
+  "settings": {
+    "full": {
+      "ambiguous_behavior_weight": 0.0,
+      "ambiguous_decision_weight": 1.0,
+      "ambiguous_projection": "causal_support",
+      "ambiguous_replay_group_weight": 0.05,
+      "ambiguous_teacher_weight": 0.0,
+      "ambiguous_update_mode": "immediate",
+      "archive_policy_min_feedback": 0.0,
+      "archive_probe_mix": 0.0,
+      "base_kl_weight": 0.0,
+      "batch_size": 8,
+      "behavior_epsilon": 0.02,
+      "behavior_epsilon_half_life": null,
+      "behavior_mode": "uncertainty_interrupt_probe",
+      "exploration_taper_half_life": 5.0,
+      "exploration_taper_start_step": 160,
+      "force_newest_every_step": true,
+      "interrupt_probe_half_life": 80.0,
+      "interrupt_probe_max_confidence": 0.6,
+      "interrupt_probe_mix": 0.15,
+      "learning_rate": 0.001,
+      "lm_head_learning_rate": null,
+      "lm_head_lora_a_learning_rate_scale": null,
+      "lora_a_learning_rate_scale": 1.0,
+      "lora_alpha": 8,
+      "lora_dropout": 0.0,
+      "lora_layers_to_transform": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12
+      ],
+      "lora_rank": 4,
+      "lora_target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "self_attn.out_proj"
+      ],
+      "max_grad_norm": 1.0,
+      "optimizer_beta1": 0.9,
+      "optimizer_weight_decay": 0.0,
+      "propensity_weight_cap": 4.0,
+      "propensity_weight_mode": "none",
+      "reasoning_tokens": 0,
+      "reliable_behavior_weight": 0.9,
+      "reliable_decision_weight": 0.05,
+      "reliable_teacher_weight": 0.05,
+      "replay_prompt_examples": 0,
+      "replay_recency_half_life": 32.0,
+      "replay_size": 64,
+      "replay_strategy": "selection_balanced",
+      "target_mode": "causal_fusion",
+      "teacher_temperature": 1.0,
+      "update_steps": 2,
+      "warmup_examples": 4
+    },
+    "neither": {
+      "ambiguous_behavior_weight": 0.0,
+      "ambiguous_decision_weight": 1.0,
+      "ambiguous_projection": "causal_support",
+      "ambiguous_replay_group_weight": 0.05,
+      "ambiguous_teacher_weight": 0.0,
+      "ambiguous_update_mode": "immediate",
+      "archive_policy_min_feedback": 0.0,
+      "archive_probe_mix": 0.0,
+      "base_kl_weight": 0.0,
+      "batch_size": 1,
+      "behavior_epsilon": 0.0,
+      "behavior_epsilon_half_life": null,
+      "behavior_mode": "epsilon_greedy",
+      "exploration_taper_half_life": null,
+      "exploration_taper_start_step": null,
+      "force_newest_every_step": true,
+      "interrupt_probe_half_life": null,
+      "interrupt_probe_max_confidence": 1.0,
+      "interrupt_probe_mix": 0.0,
+      "learning_rate": 0.001,
+      "lm_head_learning_rate": null,
+      "lm_head_lora_a_learning_rate_scale": null,
+      "lora_a_learning_rate_scale": 1.0,
+      "lora_alpha": 8,
+      "lora_dropout": 0.0,
+      "lora_layers_to_transform": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12
+      ],
+      "lora_rank": 4,
+      "lora_target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "self_attn.out_proj"
+      ],
+      "max_grad_norm": 1.0,
+      "optimizer_beta1": 0.9,
+      "optimizer_weight_decay": 0.0,
+      "propensity_weight_cap": 4.0,
+      "propensity_weight_mode": "none",
+      "reasoning_tokens": 0,
+      "reliable_behavior_weight": 0.9,
+      "reliable_decision_weight": 0.05,
+      "reliable_teacher_weight": 0.05,
+      "replay_prompt_examples": 0,
+      "replay_recency_half_life": 32.0,
+      "replay_size": 64,
+      "replay_strategy": "selection_balanced",
+      "target_mode": "causal_fusion",
+      "teacher_temperature": 1.0,
+      "update_steps": 2,
+      "warmup_examples": 4
+    },
+    "no_exploration": {
+      "ambiguous_behavior_weight": 0.0,
+      "ambiguous_decision_weight": 1.0,
+      "ambiguous_projection": "causal_support",
+      "ambiguous_replay_group_weight": 0.05,
+      "ambiguous_teacher_weight": 0.0,
+      "ambiguous_update_mode": "immediate",
+      "archive_policy_min_feedback": 0.0,
+      "archive_probe_mix": 0.0,
+      "base_kl_weight": 0.0,
+      "batch_size": 8,
+      "behavior_epsilon": 0.0,
+      "behavior_epsilon_half_life": null,
+      "behavior_mode": "epsilon_greedy",
+      "exploration_taper_half_life": null,
+      "exploration_taper_start_step": null,
+      "force_newest_every_step": true,
+      "interrupt_probe_half_life": null,
+      "interrupt_probe_max_confidence": 1.0,
+      "interrupt_probe_mix": 0.0,
+      "learning_rate": 0.001,
+      "lm_head_learning_rate": null,
+      "lm_head_lora_a_learning_rate_scale": null,
+      "lora_a_learning_rate_scale": 1.0,
+      "lora_alpha": 8,
+      "lora_dropout": 0.0,
+      "lora_layers_to_transform": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12
+      ],
+      "lora_rank": 4,
+      "lora_target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "self_attn.out_proj"
+      ],
+      "max_grad_norm": 1.0,
+      "optimizer_beta1": 0.9,
+      "optimizer_weight_decay": 0.0,
+      "propensity_weight_cap": 4.0,
+      "propensity_weight_mode": "none",
+      "reasoning_tokens": 0,
+      "reliable_behavior_weight": 0.9,
+      "reliable_decision_weight": 0.05,
+      "reliable_teacher_weight": 0.05,
+      "replay_prompt_examples": 0,
+      "replay_recency_half_life": 32.0,
+      "replay_size": 64,
+      "replay_strategy": "selection_balanced",
+      "target_mode": "causal_fusion",
+      "teacher_temperature": 1.0,
+      "update_steps": 2,
+      "warmup_examples": 4
+    },
+    "no_replay_newest_only": {
+      "ambiguous_behavior_weight": 0.0,
+      "ambiguous_decision_weight": 1.0,
+      "ambiguous_projection": "causal_support",
+      "ambiguous_replay_group_weight": 0.05,
+      "ambiguous_teacher_weight": 0.0,
+      "ambiguous_update_mode": "immediate",
+      "archive_policy_min_feedback": 0.0,
+      "archive_probe_mix": 0.0,
+      "base_kl_weight": 0.0,
+      "batch_size": 1,
+      "behavior_epsilon": 0.02,
+      "behavior_epsilon_half_life": null,
+      "behavior_mode": "uncertainty_interrupt_probe",
+      "exploration_taper_half_life": 5.0,
+      "exploration_taper_start_step": 160,
+      "force_newest_every_step": true,
+      "interrupt_probe_half_life": 80.0,
+      "interrupt_probe_max_confidence": 0.6,
+      "interrupt_probe_mix": 0.15,
+      "learning_rate": 0.001,
+      "lm_head_learning_rate": null,
+      "lm_head_lora_a_learning_rate_scale": null,
+      "lora_a_learning_rate_scale": 1.0,
+      "lora_alpha": 8,
+      "lora_dropout": 0.0,
+      "lora_layers_to_transform": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12
+      ],
+      "lora_rank": 4,
+      "lora_target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "self_attn.out_proj"
+      ],
+      "max_grad_norm": 1.0,
+      "optimizer_beta1": 0.9,
+      "optimizer_weight_decay": 0.0,
+      "propensity_weight_cap": 4.0,
+      "propensity_weight_mode": "none",
+      "reasoning_tokens": 0,
+      "reliable_behavior_weight": 0.9,
+      "reliable_decision_weight": 0.05,
+      "reliable_teacher_weight": 0.05,
+      "replay_prompt_examples": 0,
+      "replay_recency_half_life": 32.0,
+      "replay_size": 64,
+      "replay_strategy": "selection_balanced",
+      "target_mode": "causal_fusion",
+      "teacher_temperature": 1.0,
+      "update_steps": 2,
+      "warmup_examples": 4
+    }
+  },
+  "summary": {
+    "full": {
+      "cum_regret": {
+        "ci95": 4.567027163383468,
+        "mean": 44.76272608109617,
+        "std": 4.035879125779252
+      },
+      "cumulative_observed_reward": {
+        "ci95": 19.734965867155122,
+        "mean": 229.08333333333334,
+        "std": 17.439777330382785
+      },
+      "observed_reward_per_decision": {
+        "ci95": 0.08222902444647968,
+        "mean": 0.9545138888888888,
+        "std": 0.07266573887659494
+      },
+      "online_accuracy": {
+        "ci95": 0.025968344927461275,
+        "mean": 0.7027777777777778,
+        "std": 0.022948210613692073
+      },
+      "online_accuracy_off-hours": {
+        "ci95": 0.021606969040360816,
+        "mean": 0.8166666666666668,
+        "std": 0.019094065395649326
+      },
+      "online_accuracy_on-call": {
+        "ci95": 0.014145081595145844,
+        "mean": 0.775,
+        "std": 0.012500000000000011
+      },
+      "online_accuracy_weekday": {
+        "ci95": 0.06977603058675987,
+        "mean": 0.5166666666666666,
+        "std": 0.06166103577895311
+      },
+      "regret_off-hours": {
+        "ci95": 2.066514186567639,
+        "mean": 4.705364532755003,
+        "std": 1.8261773294372552
+      },
+      "regret_on-call": {
+        "ci95": 1.6503754230654386,
+        "mean": 8.7458441402708,
+        "std": 1.4584357573022042
+      },
+      "regret_per_decision": {
+        "ci95": 0.01902927984743112,
+        "mean": 0.18651135867123406,
+        "std": 0.016816163024080222
+      },
+      "regret_weekday": {
+        "ci95": 7.874466912624631,
+        "mean": 31.311517408070372,
+        "std": 6.958661619992804
+      }
+    },
+    "neither": {
+      "cum_regret": {
+        "ci95": 4.118703929628247,
+        "mean": 130.41997195136778,
+        "std": 3.6396961568620987
+      },
+      "cumulative_observed_reward": {
+        "ci95": 13.588116131384806,
+        "mean": -4.25,
+        "std": 12.007809958522827
+      },
+      "observed_reward_per_decision": {
+        "ci95": 0.05661715054743669,
+        "mean": -0.017708333333333333,
+        "std": 0.05003254149384511
+      },
+      "online_accuracy": {
+        "ci95": 0.03410934667894123,
+        "mean": 0.42777777777777776,
+        "std": 0.030142408908626
+      },
+      "online_accuracy_off-hours": {
+        "ci95": 0.02450000000000002,
+        "mean": 0.4375,
+        "std": 0.021650635094610984
+      },
+      "online_accuracy_on-call": {
+        "ci95": 0.049675893997435445,
+        "mean": 0.4291666666666667,
+        "std": 0.04389855730355306
+      },
+      "online_accuracy_weekday": {
+        "ci95": 0.04547007562977852,
+        "mean": 0.4166666666666667,
+        "std": 0.040181878170803986
+      },
+      "regret_off-hours": {
+        "ci95": 1.9541682860258462,
+        "mean": 45.37403998694149,
+        "std": 1.7268973254778346
+      },
+      "regret_on-call": {
+        "ci95": 1.0685084652157442,
+        "mean": 43.27508210199908,
+        "std": 0.9442402806485262
+      },
+      "regret_per_decision": {
+        "ci95": 0.01716126637345105,
+        "mean": 0.5434165497973659,
+        "std": 0.015165400653592094
+      },
+      "regret_weekday": {
+        "ci95": 3.7896880245969236,
+        "mean": 41.77084986242716,
+        "std": 3.348945001753676
+      }
+    },
+    "no_exploration": {
+      "cum_regret": {
+        "ci95": 10.956623779147593,
+        "mean": 62.00280379390927,
+        "std": 9.68236176780661
+      },
+      "cumulative_observed_reward": {
+        "ci95": 51.96875514298097,
+        "mean": 186.41666666666666,
+        "std": 45.92475730293338
+      },
+      "observed_reward_per_decision": {
+        "ci95": 0.21653647976242077,
+        "mean": 0.7767361111111111,
+        "std": 0.19135315542888914
+      },
+      "online_accuracy": {
+        "ci95": 0.04722879039288759,
+        "mean": 0.6944444444444445,
+        "std": 0.04173605333699091
+      },
+      "online_accuracy_off-hours": {
+        "ci95": 0.07790503478238386,
+        "mean": 0.8083333333333332,
+        "std": 0.06884463184107625
+      },
+      "online_accuracy_on-call": {
+        "ci95": 0.08487048957087501,
+        "mean": 0.725,
+        "std": 0.07500000000000001
+      },
+      "online_accuracy_weekday": {
+        "ci95": 0.028290163190291626,
+        "mean": 0.5499999999999999,
+        "std": 0.024999999999999967
+      },
+      "regret_off-hours": {
+        "ci95": 3.372606651833611,
+        "mean": 12.832031929574853,
+        "std": 2.9803704463880476
+      },
+      "regret_on-call": {
+        "ci95": 6.039476270260715,
+        "mean": 17.304628856042203,
+        "std": 5.337081505713337
+      },
+      "regret_per_decision": {
+        "ci95": 0.04565259907978165,
+        "mean": 0.25834501580795527,
+        "std": 0.040343174032527546
+      },
+      "regret_weekday": {
+        "ci95": 4.445860425974306,
+        "mean": 31.86614300829223,
+        "std": 3.9288041536465865
+      }
+    },
+    "no_replay_newest_only": {
+      "cum_regret": {
+        "ci95": 11.336792141303182,
+        "mean": 134.90454473007915,
+        "std": 10.018316318155447
+      },
+      "cumulative_observed_reward": {
+        "ci95": 27.698848552080843,
+        "mean": -6.583333333333333,
+        "std": 24.477455613959005
+      },
+      "observed_reward_per_decision": {
+        "ci95": 0.11541186896700352,
+        "mean": -0.027430555555555552,
+        "std": 0.10198939839149586
+      },
+      "online_accuracy": {
+        "ci95": 0.01700027232897339,
+        "mean": 0.3958333333333333,
+        "std": 0.015023130314433267
+      },
+      "online_accuracy_off-hours": {
+        "ci95": 0.029445335416289246,
+        "mean": 0.42083333333333334,
+        "std": 0.02602082499332666
+      },
+      "online_accuracy_on-call": {
+        "ci95": 0.058890670832578484,
+        "mean": 0.37083333333333335,
+        "std": 0.05204164998665331
+      },
+      "online_accuracy_weekday": {
+        "ci95": 0.016333333333333314,
+        "mean": 0.3958333333333333,
+        "std": 0.014433756729740626
+      },
+      "regret_off-hours": {
+        "ci95": 0.8651204639676282,
+        "mean": 46.50096475882035,
+        "std": 0.7645064276834144
+      },
+      "regret_on-call": {
+        "ci95": 7.109117665139507,
+        "mean": 47.15705889232263,
+        "std": 6.282322955615844
+      },
+      "regret_per_decision": {
+        "ci95": 0.047236633922096566,
+        "mean": 0.5621022697086632,
+        "std": 0.041742984658981006
+      },
+      "regret_weekday": {
+        "ci95": 3.8145965003912266,
+        "mean": 41.24652107893612,
+        "std": 3.3709566066592025
+      }
+    }
+  }
+}

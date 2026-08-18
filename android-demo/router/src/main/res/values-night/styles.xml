@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.OnlineSdft" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:statusBarColor">#0D1014</item>
+        <item name="android:navigationBarColor">#161B21</item>
+        <item name="android:windowBackground">#0D1014</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+</resources>
